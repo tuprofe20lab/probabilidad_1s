@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuProfe20 Lab: Aritmética - Secundaria | Probabilidad</title>
+    
+    <!-- Tailwind CSS, React 18, ReactDOM y Babel -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- KaTeX para renderizado matemático -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100dvh;
+            user-select: none;
+            font-family: 'Nunito', sans-serif;
+        }
+        .font-fun { font-family: 'Nunito', sans-serif; }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(105vh) rotate(0deg); }
+            100% { transform: translateY(-105vh) rotate(360deg); }
+        }
+        @keyframes slideInRight {
+            0% { opacity: 0; transform: translateX(16px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes jellyPop {
+            0% { transform: scale3d(.3, .3, .3); opacity: 0; }
+            20% { transform: scale3d(1.15, 1.15, 1.15); }
+            40% { transform: scale3d(.92, .92, .92); }
+            60% { transform: scale3d(1.05, 1.05, 1.05); opacity: 1; }
+            80% { transform: scale3d(.97, .97, .97); }
+            100% { transform: scale3d(1, 1, 1); opacity: 1; }
+        }
+        @keyframes robotFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        @keyframes robotThinkTilt {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(6deg) translateY(-3px); }
+        }
+        @keyframes robotJump {
+            0%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-14px); }
+        }
+        @keyframes robotTalkArmL {
+            0%, 100% { transform: rotate(45deg); }
+            50% { transform: rotate(95deg); }
+        }
+        @keyframes robotTalkArmR {
+            0%, 100% { transform: rotate(-45deg); }
+            50% { transform: rotate(-95deg); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.7)); }
+            50% { filter: drop-shadow(0 0 12px rgba(250, 204, 21, 1)); }
+        }
+        @keyframes svgPop {
+            0% { opacity: 0; transform: scale(0.6); }
+            70% { opacity: 1; transform: scale(1.06); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes confettiExplosion {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0) rotate(var(--rot)); opacity: 0; }
+        }
+
+        /* Ocultar scrollbars manteniendo desplazamiento táctil/rueda */
+        .scrollbar-hide::-webkit-scrollbar { display: none !important; }
+        .scrollbar-hide { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+
+        .animate-floatUp { animation: floatUp linear infinite; }
+        .animate-slideInRight { animation: slideInRight 0.35s ease-out forwards; }
+        .animate-fadeInScale { animation: fadeInScale 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-jellyPop { animation: jellyPop 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-robotFloat { animation: robotFloat 3s ease-in-out infinite; }
+        .animate-robotThinkTilt { animation: robotThinkTilt 2s ease-in-out infinite; }
+        .animate-robotJump { animation: robotJump 1s cubic-bezier(0.28, 0.84, 0.42, 1) infinite; }
+        .animate-robotTalkArmL { animation: robotTalkArmL 0.6s ease-in-out infinite; }
+        .animate-robotTalkArmR { animation: robotTalkArmR 0.6s ease-in-out infinite 0.1s; }
+        .animate-confettiExplosion { animation: confettiExplosion 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        .animate-pulseGlow { animation: pulseGlow 1.5s ease-in-out infinite; }
+        .svg-pop { transform-box: fill-box; transform-origin: center; animation: svgPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        /* Estilos KaTeX */
+        .katex { font-weight: 800 !important; }
+        .katex-display { margin: 0 !important; padding: 0 !important; }
+
+        .math-card .katex { font-size: clamp(0.85rem, 1.3vw, 1.1rem) !important; color: #0f172a !important; }
+        .math-enunciado .katex { font-size: clamp(0.95rem, 1.6vw, 1.25rem) !important; color: #fde047 !important; }
+        .math-current .katex { font-size: clamp(1rem, 1.55vw, 1.45rem) !important; color: #0f172a !important; }
+        .math-final .katex { font-size: clamp(1.05rem, 1.65vw, 1.55rem) !important; color: #065f46 !important; }
+        .math-history .katex { font-size: clamp(0.9rem, 1.3vw, 1.25rem) !important; color: #475569 !important; }
+
+        .math-flow-line {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            overflow-x: auto;
+            padding: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, memo } = React;
+
+        // =========================================================================
+        // 1. ICONOS SVG INLINE
+        // =========================================================================
+        const Icon = ({ paths, className = "", size = 24, fill = "none", strokeWidth = "2.5" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className} dangerouslySetInnerHTML={{__html: paths}} />
+        );
+
+        const VolumeX = (p) => <Icon {...p} paths='<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>' />;
+        const Volume2 = (p) => <Icon {...p} paths='<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>' />;
+        const Rocket = (p) => <Icon {...p} paths='<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>' />;
+        const Sparkles = (p) => <Icon {...p} paths='<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 3v4"/><path d="M17 5h4"/>' />;
+        const Home = (p) => <Icon {...p} paths='<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>' />;
+        const ChevronLeft = (p) => <Icon {...p} paths='<polyline points="15 18 9 12 15 6"/>' />;
+        const ChevronRight = (p) => <Icon {...p} paths='<polyline points="9 18 15 12 9 6"/>' />;
+        const Shapes = (p) => <Icon {...p} paths='<path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"/><rect x="3" y="14" width="7" height="7" rx="1"/><circle cx="17.5" cy="17.5" r="3.5"/>' />;
+
+        // =========================================================================
+        // 2. CONTROLADOR DE AUDIO (WEB AUDIO API)
+        // =========================================================================
+        const AudioController = {
+            ctx: null, muted: false, bgmNode: null,
+            init: function() {
+                if (this.ctx) return;
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) this.ctx = new AudioContext();
+            },
+            startBGM: function() {
+                if (!this.ctx) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
+                if (this.bgmNode) return;
+                const mainGain = this.ctx.createGain();
+                mainGain.gain.value = this.muted ? 0 : 0.06;
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 780;
+                filter.connect(mainGain);
+                mainGain.connect(this.ctx.destination);
+                this.bgmNode = { mainGain, filter, interval: null };
+                const chords = [ [55, 60, 64, 71], [52, 57, 64, 71], [53, 57, 60, 64], [50, 55, 59, 64] ];
+                let chordIndex = 0;
+                const playChord = () => {
+                    if (this.ctx.state !== 'running') return;
+                    const chord = chords[chordIndex];
+                    chordIndex = (chordIndex + 1) % chords.length;
+                    chord.forEach((midi, i) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
+                        const now = this.ctx.currentTime;
+                        const delay = i * 0.2;
+                        gain.gain.setValueAtTime(0, now + delay);
+                        gain.gain.linearRampToValueAtTime(0.14, now + delay + 2);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 7.5);
+                        osc.connect(gain);
+                        gain.connect(filter);
+                        osc.start(now + delay);
+                        osc.stop(now + delay + 7.5);
+                    });
+                };
+                playChord();
+                this.bgmNode.interval = setInterval(playChord, 6000);
+            },
+            play: function(type) {
+                if (this.muted || !this.ctx) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                const now = this.ctx.currentTime;
+                if (type === 'pop') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(520, now);
+                    osc.frequency.exponentialRampToValueAtTime(840, now + 0.1);
+                    gain.gain.setValueAtTime(0.22, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'pop-reverse') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(640, now);
+                    osc.frequency.exponentialRampToValueAtTime(280, now + 0.12);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'success') {
+                    osc.disconnect();
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, i) => {
+                        const o = this.ctx.createOscillator();
+                        const g = this.ctx.createGain();
+                        o.type = 'triangle';
+                        o.frequency.value = freq;
+                        o.connect(g);
+                        g.connect(this.ctx.destination);
+                        const startTime = now + (i * 0.07);
+                        g.gain.setValueAtTime(0, startTime);
+                        g.gain.linearRampToValueAtTime(0.18, startTime + 0.04);
+                        g.gain.linearRampToValueAtTime(0, startTime + 0.35);
+                        o.start(startTime);
+                        o.stop(startTime + 0.35);
+                    });
+                } else if (type === 'swoosh') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(280, now);
+                    osc.frequency.exponentialRampToValueAtTime(75, now + 0.18);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.18);
+                    osc.start(now);
+                    osc.stop(now + 0.18);
+                }
+            },
+            toggleMute: function() {
+                this.muted = !this.muted;
+                if (this.bgmNode && this.ctx) {
+                    this.bgmNode.mainGain.gain.setTargetAtTime(this.muted ? 0 : 0.06, this.ctx.currentTime, 0.1);
+                }
+                return this.muted;
+            }
+        };
+
+        // =========================================================================
+        // 3. COMPONENTE KATEX
+        // =========================================================================
+        const MathDisplay = memo(({ latex, className = "", inline = false, align = "left" }) => {
+            const containerRef = useRef(null);
+            useEffect(() => {
+                if (containerRef.current && window.katex) {
+                    try {
+                        window.katex.render(latex, containerRef.current, {
+                            displayMode: !inline,
+                            throwOnError: false,
+                            strict: false,
+                            trust: true
+                        });
+                    } catch (e) {
+                        containerRef.current.innerText = latex;
+                    }
+                }
+            }, [latex, inline]);
+
+            if (inline) {
+                return <span ref={containerRef} className={`inline-block align-middle ${className}`} />;
+            }
+            return (
+                <div className={`math-flow-line scrollbar-hide ${align === 'center' ? 'justify-center' : 'justify-start'} ${className}`}>
+                    <div ref={containerRef} className={align === 'center' ? 'text-center' : 'text-left'} />
+                </div>
+            );
+        });
+
+        // =========================================================================
+        // 4. PIZARRA INTERACTIVA (MANTENIDA ÍNTEGRA DE LA PLANTILLA ORIGINAL)
+        // =========================================================================
+        const DrawingCanvas = () => {
+            const canvasRef = useRef(null);
+            const [isDrawing, setIsDrawing] = useState(false);
+            const [isDrawMode, setIsDrawMode] = useState(false);
+            const [tool, setTool] = useState('pen');
+            const [isSnapMode, setIsSnapMode] = useState(false);
+            const [penColor, setPenColor] = useState('#ef4444');
+            const [penWidth, setPenWidth] = useState(6);
+            const penPointsRef = useRef([]);
+            const activePointerRef = useRef(null);
+            const savedImageRef = useRef(null);
+            const startPosRef = useRef({ x: 0, y: 0 });
+            const historyRef = useRef([]);
+
+            const playPop = () => { AudioController.init(); AudioController.startBGM(); AudioController.play('pop'); };
+
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                if (!canvas || !canvas.parentElement) return;
+                const updateSize = (entries) => {
+                    for (let entry of entries) {
+                        const { width, height } = entry.contentRect;
+                        const ctx = canvas.getContext('2d');
+                        let imgData = null;
+                        if (canvas.width > 0 && canvas.height > 0) {
+                            try { imgData = ctx.getImageData(0, 0, canvas.width, canvas.height); } catch (e) {}
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        if (imgData) ctx.putImageData(imgData, 0, 0);
+                    }
+                };
+                const observer = new ResizeObserver(updateSize);
+                observer.observe(canvas.parentElement);
+                return () => observer.disconnect();
+            }, []);
+
+            const renderPen = (points, straight = false) => {
+                const ctx = canvasRef.current.getContext('2d');
+                ctx.putImageData(savedImageRef.current, 0, 0);
+                const angle = -15 * Math.PI / 180;
+                const c = Math.cos(angle), s = Math.sin(angle);
+                const local = points.map(p => ({ x: c * p.x + s * p.y, y: (-s * p.x + c * p.y) / 0.5 }));
+                ctx.save();
+                ctx.transform(c, s, -0.5 * s, 0.5 * c, 0, 0);
+                ctx.lineWidth = penWidth;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = penColor;
+                ctx.fillStyle = penColor;
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.beginPath();
+                ctx.moveTo(local[0].x, local[0].y);
+                if (local.length === 1) {
+                    ctx.arc(local[0].x, local[0].y, penWidth / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    if (!straight) {
+                        for (let i = 1; i < local.length - 1; i++) {
+                            const midpoint = { x: (local[i].x + local[i + 1].x) / 2, y: (local[i].y + local[i + 1].y) / 2 };
+                            ctx.quadraticCurveTo(local[i].x, local[i].y, midpoint.x, midpoint.y);
+                        }
+                    }
+                    const last = local[local.length - 1];
+                    ctx.lineTo(last.x, last.y);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            };
+
+            const startDrawing = (e) => {
+                if (!isDrawMode || activePointerRef.current !== null || (e.pointerType === 'mouse' && e.button !== 0)) return;
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                const rect = canvas.getBoundingClientRect();
+                
+                historyRef.current.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+                
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = tool === 'highlighter' ? 24 : penWidth;
+                ctx.strokeStyle = tool === 'highlighter' ? `${penColor}4D` : penColor;
+                ctx.globalCompositeOperation = tool === 'highlighter' ? 'multiply' : 'source-over';
+
+                const startX = e.clientX - rect.left;
+                const startY = e.clientY - rect.top;
+                
+                savedImageRef.current = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                startPosRef.current = { x: startX, y: startY };
+                
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                penPointsRef.current = [{ x: startX, y: startY }];
+                activePointerRef.current = e.pointerId;
+                canvas.setPointerCapture(e.pointerId);
+                if (tool === 'pen') renderPen(penPointsRef.current);
+                setIsDrawing(true);
+            };
+
+            const draw = (e) => {
+                if (activePointerRef.current !== e.pointerId || !isDrawMode) return;
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                const rect = canvas.getBoundingClientRect();
+                const currentX = e.clientX - rect.left;
+                const currentY = e.clientY - rect.top;
+
+                if (isSnapMode || e.shiftKey) {
+                    ctx.putImageData(savedImageRef.current, 0, 0);
+                    const dx = currentX - startPosRef.current.x;
+                    const dy = currentY - startPosRef.current.y;
+                    const angle = Math.atan2(dy, dx);
+                    const snappedAngle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const snapX = startPosRef.current.x + Math.cos(snappedAngle) * dist;
+                    const snapY = startPosRef.current.y + Math.sin(snappedAngle) * dist;
+                    if (tool === 'pen') { renderPen([startPosRef.current, { x: snapX, y: snapY }], true); return; }
+                    ctx.beginPath(); ctx.moveTo(startPosRef.current.x, startPosRef.current.y); ctx.lineTo(snapX, snapY); ctx.stroke();
+                } else {
+                    if (tool === 'pen') {
+                        const events = e.nativeEvent?.getCoalescedEvents?.() || [];
+                        const samples = events.length ? events : [e];
+                        samples.forEach(sample => penPointsRef.current.push({ x: sample.clientX - rect.left, y: sample.clientY - rect.top }));
+                        renderPen(penPointsRef.current); return;
+                    }
+                    if (tool === 'highlighter') ctx.putImageData(savedImageRef.current, 0, 0);
+                    ctx.lineTo(currentX, currentY); ctx.stroke();
+                }
+            };
+
+            const stopDrawing = () => {
+                const canvas = canvasRef.current;
+                const pointer = activePointerRef.current;
+                activePointerRef.current = null;
+                if (pointer !== null && canvas.hasPointerCapture(pointer)) canvas.releasePointerCapture(pointer);
+                if (isDrawing) { canvas.getContext('2d').closePath(); setIsDrawing(false); }
+            };
+
+            const selectTool = (nextTool) => {
+                stopDrawing(); playPop();
+                const enabled = nextTool !== 'selector' && !(isDrawMode && tool === nextTool);
+                setIsDrawMode(enabled);
+                if (nextTool !== 'selector') setTool(nextTool);
+            };
+
+            useEffect(() => {
+                const onKey = (event) => {
+                    if (event.key === 'Escape') { setIsDrawing(false); setIsDrawMode(false); }
+                    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+                        if (historyRef.current.length > 0) {
+                            playPop();
+                            const lastState = historyRef.current.pop();
+                            const canvas = canvasRef.current;
+                            canvas.getContext('2d').putImageData(lastState, 0, 0);
+                            savedImageRef.current = lastState;
+                        }
+                    }
+                };
+                window.addEventListener('keydown', onKey);
+                return () => window.removeEventListener('keydown', onKey);
+            }, []);
+
+            const clearCanvas = () => {
+                playPop();
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                historyRef.current.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                savedImageRef.current = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            };
+
+            const colors = [
+                { name: 'Rojo', hex: '#ef4444', tw: 'bg-[#ef4444]' },
+                { name: 'Negro', hex: '#0f172a', tw: 'bg-[#0f172a]' },
+                { name: 'Azul', hex: '#3b82f6', tw: 'bg-[#3b82f6]' },
+                { name: 'Verde', hex: '#22c55e', tw: 'bg-[#22c55e]' },
+                { name: 'Amarillo', hex: '#facc15', tw: 'bg-[#facc15]' }
+            ];
+
+            return (
+                <>
+                    <div style={{zIndex: 120, pointerEvents: 'auto'}} className="absolute top-2 right-2 flex flex-wrap max-w-[calc(100%-1rem)] justify-end gap-1.5 sm:gap-2 pointer-events-auto bg-white/85 p-1.5 rounded-xl backdrop-blur-sm shadow-md border border-slate-200">
+                        <button onClick={() => selectTool('selector')} aria-pressed={!isDrawMode} title="Seleccionar (Esc)" className={`px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-black rounded-lg border-2 shadow-sm transition-all ${!isDrawMode ? 'bg-cyan-500 text-white border-cyan-600' : 'bg-white text-slate-600 border-slate-300'}`}>🖱️ Selector</button>
+                        <button onClick={() => selectTool('pen')} className={`px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-black rounded-lg border-2 shadow-sm transition-all ${isDrawMode && tool === 'pen' ? 'bg-indigo-500 text-white border-indigo-600 scale-105' : 'bg-white text-slate-600 border-slate-300'}`}>🖊️ Lápiz</button>
+                        <button onClick={() => selectTool('highlighter')} className={`px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-black rounded-lg border-2 shadow-sm transition-all ${isDrawMode && tool === 'highlighter' ? 'bg-yellow-400 text-slate-900 border-yellow-500 scale-105' : 'bg-white text-slate-600 border-slate-300'}`}>🖍️ Resaltador</button>
+                        {isDrawMode && tool === 'pen' && (
+                            <label className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white border-2 border-indigo-200 text-xs font-black text-slate-700">
+                                Grosor <input type="range" min="3" max="16" step="1" value={penWidth} onChange={e => setPenWidth(Number(e.target.value))} className="w-16 accent-indigo-600" />
+                            </label>
+                        )}
+                        {isDrawMode && (
+                            <>
+                                <button onClick={() => { playPop(); setIsSnapMode(!isSnapMode); }} className={`px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-black rounded-lg border-2 shadow-sm transition-all ${isSnapMode ? 'bg-blue-500 text-white border-blue-600 scale-105' : 'bg-white text-slate-600 border-slate-300'}`}>📐 Recto</button>
+                                <button onClick={clearCanvas} className="px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-black bg-white text-rose-600 border-2 border-rose-300 rounded-lg shadow-sm hover:bg-rose-50 active:scale-95 transition-all">🗑️ Limpiar</button>
+                                <div className="px-2 py-1 text-[11px] font-bold text-slate-400 hidden sm:flex items-center bg-white rounded-lg border border-slate-200">CTRL+Z: Deshacer</div>
+                            </>
+                        )}
+                    </div>
+                    {isDrawMode && (
+                        <div className="absolute top-1/2 right-3 -translate-y-1/2 z-[110] flex flex-col gap-2.5 p-2 bg-white/90 backdrop-blur-md rounded-xl border-[3px] border-slate-200 shadow-xl pointer-events-auto">
+                            {colors.map(c => (
+                                <button key={c.hex} onClick={() => { playPop(); setPenColor(c.hex); }} title={c.name} className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full border-[3px] shadow-sm transition-all hover:scale-110 active:scale-95 ${c.tw} ${penColor === c.hex ? 'border-white outline outline-[3px] outline-slate-800 scale-110' : 'border-black/20'}`} />
+                            ))}
+                        </div>
+                    )}
+                    <canvas
+                        ref={canvasRef}
+                        style={{ zIndex: 100, pointerEvents: isDrawMode ? 'auto' : 'none', touchAction: isDrawMode ? 'none' : 'auto' }}
+                        className={`absolute inset-0 z-[100] touch-none ${isDrawMode ? 'cursor-crosshair pointer-events-auto' : 'pointer-events-none'}`}
+                        onPointerDown={startDrawing}
+                        onPointerMove={draw}
+                        onPointerUp={e => { if (activePointerRef.current === e.pointerId) { draw(e); stopDrawing(); } }}
+                        onPointerLeave={e => { if (!e.currentTarget.hasPointerCapture(e.pointerId)) stopDrawing(); }}
+                        onLostPointerCapture={stopDrawing}
+                        onPointerCancel={stopDrawing}
+                    />
+                </>
+            );
+        };
+
+        // =========================================================================
+        // 5. COMPONENTES AUXILIARES PARA GRÁFICOS GEOMÉTRICOS SVG
+        // =========================================================================
+
+        // Barra fraccionaria geométrica reutilizable
+        const FractionBarSVG = ({ x = 40, y = 265, w = 440, h = 36, total, litIndices = [], color = "#3b82f6", label = "", subLabel = "" }) => {
+            const segW = w / total;
+            return (
+                <g>
+                    {label && <text x={x} y={y - 10} fontSize="14" fontWeight="900" fill="#334155">{label}</text>}
+                    {subLabel && <text x={x + w} y={y - 10} fontSize="14" fontWeight="900" fill="#0f766e" textAnchor="end">{subLabel}</text>}
+                    <rect x={x} y={y} width={w} height={h} rx="8" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="2.5" />
+                    {Array.from({ length: total }).map((_, i) => {
+                        const isLit = litIndices.includes(i);
+                        return (
+                            <rect
+                                key={i}
+                                x={x + i * segW + 2}
+                                y={y + 2}
+                                width={Math.max(2, segW - 4)}
+                                height={h - 4}
+                                rx="5"
+                                fill={isLit ? color : "#e2e8f0"}
+                                stroke={isLit ? "#0f172a" : "#cbd5e1"}
+                                strokeWidth={isLit ? "2" : "1"}
+                                className={isLit ? "svg-pop" : ""}
+                                style={isLit ? { animationDelay: `${i * 0.03}s` } : {}}
+                            />
+                        );
+                    })}
+                </g>
+            );
+        };
+
+        // Utilidad para arcos de gráficos circulares (sectores)
+        const describeSector = (cx, cy, r, startAngleDeg, endAngleDeg) => {
+            const rad = (deg) => (deg - 90) * Math.PI / 180;
+            const x1 = cx + r * Math.cos(rad(startAngleDeg));
+            const y1 = cy + r * Math.sin(rad(startAngleDeg));
+            const x2 = cx + r * Math.cos(rad(endAngleDeg));
+            const y2 = cy + r * Math.sin(rad(endAngleDeg));
+            const largeArc = (endAngleDeg - startAngleDeg) > 180 ? 1 : 0;
+            return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+        };
+
+        // =========================================================================
+        // 6. RENDERIZADOR GRÁFICO GEOMÉTRICO PARA LOS 12 EJERCICIOS
+        // =========================================================================
+        const ProbabilityGraphic = memo(({ exerciseId, step }) => {
+            // --- EJERCICIO 1: 11 Bolas en una caja (3 negras, 3 amarillas, 1 azul, 4 verdes) ---
+            if (exerciseId === 1) {
+                const balls = [
+                    { c: 'negra', fill: '#1e293b', stroke: '#0f172a', label: 'N' },
+                    { c: 'negra', fill: '#1e293b', stroke: '#0f172a', label: 'N' },
+                    { c: 'negra', fill: '#1e293b', stroke: '#0f172a', label: 'N' },
+                    { c: 'amarilla', fill: '#facc15', stroke: '#ca8a04', label: 'A' },
+                    { c: 'amarilla', fill: '#facc15', stroke: '#ca8a04', label: 'A' },
+                    { c: 'amarilla', fill: '#facc15', stroke: '#ca8a04', label: 'A' },
+                    { c: 'azul', fill: '#3b82f6', stroke: '#1d4ed8', label: 'Az' },
+                    { c: 'verde', fill: '#22c55e', stroke: '#15803d', label: 'V' },
+                    { c: 'verde', fill: '#22c55e', stroke: '#15803d', label: 'V' },
+                    { c: 'verde', fill: '#22c55e', stroke: '#15803d', label: 'V' },
+                    { c: 'verde', fill: '#22c55e', stroke: '#15803d', label: 'V' },
+                ];
+                const targets = ['all', 'roja', 'amarilla', 'azul', 'verde'];
+                const target = targets[step] || 'all';
+                const litIdx = balls.map((b, i) => (target === 'all' || b.c === target) ? i : -1).filter(i => i >= 0);
+                const barColors = { all: '#6366f1', roja: '#ef4444', amarilla: '#eab308', azul: '#3b82f6', verde: '#22c55e' };
+                const labels = [
+                    { t: 'Espacio Muestral: Ω = 11 bolas', f: '11 / 11' },
+                    { t: 'a) Bolas rojas: 0 (Evento Imposible ∅)', f: '0 / 11 = 0' },
+                    { t: 'b) Bolas amarillas: 3 favorables', f: '3 / 11' },
+                    { t: 'c) Bola azul: 1 favorable', f: '1 / 11' },
+                    { t: 'd) Bolas verdes: 4 favorables', f: '4 / 11' }
+                ][step];
+
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="Caja con 11 bolas de colores">
+                        <text x="260" y="26" textAnchor="middle" fontSize="16" fontWeight="900" fill="#1e293b">{labels.t}</text>
+                        {/* Caja geométrica */}
+                        <rect x="45" y="42" width="430" height="175" rx="22" fill="#f8fafc" stroke="#334155" strokeWidth="4" />
+                        <rect x="55" y="52" width="410" height="155" rx="16" fill="#eff6ff" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="6 5" />
+                        {balls.map((b, i) => {
+                            const row = i < 6 ? 0 : 1;
+                            const col = row === 0 ? i : i - 6;
+                            const cx = row === 0 ? 95 + col * 66 : 128 + col * 66;
+                            const cy = row === 0 ? 98 : 162;
+                            const active = target === 'all' || b.c === target;
+                            return (
+                                <g key={i} opacity={active ? 1 : 0.18} className={active ? "svg-pop" : ""} style={{ animationDelay: `${i * 0.03}s` }}>
+                                    {active && target !== 'all' && <circle cx={cx} cy={cy} r="28" fill="none" stroke="#f59e0b" strokeWidth="3.5" strokeDasharray="5 3" />}
+                                    <circle cx={cx} cy={cy} r="22" fill={b.fill} stroke={b.stroke} strokeWidth="3" />
+                                    <circle cx={cx - 7} cy={cy - 7} r="5" fill="#ffffff" opacity="0.45" />
+                                    <text x={cx} y={cy + 5} textAnchor="middle" fontSize="13" fontWeight="900" fill={b.c === 'amarilla' ? '#0f172a' : '#ffffff'}>{b.label}</text>
+                                </g>
+                            );
+                        })}
+                        {target === 'roja' && (
+                            <g className="svg-pop">
+                                <rect x="145" y="102" width="230" height="54" rx="14" fill="#fef2f2" stroke="#ef4444" strokeWidth="3.5" />
+                                <text x="260" y="135" textAnchor="middle" fontSize="18" fontWeight="900" fill="#dc2626">∅ ¡No hay bolas rojas!</text>
+                            </g>
+                        )}
+                        <FractionBarSVG x={45} y={262} w={430} h={38} total={11} litIndices={target === 'roja' ? [] : litIdx} color={barColors[target]} label="Barra de 11 casos totales:" subLabel={`P = ${labels.f}`} />
+                        <text x="260" y="330" textAnchor="middle" fontSize="13" fontWeight="800" fill="#64748b">3 Negras + 3 Amarillas + 1 Azul + 4 Verdes = 11</text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 2: 7 Sobres en una mesa (3 con postales) ---
+            if (exerciseId === 2) {
+                const showFav = step >= 1;
+                const litIdx = step === 0 ? [0,1,2,3,4,5,6] : [0,1,2];
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="7 sobres en una mesa, 3 con postales">
+                        <text x="260" y="28" textAnchor="middle" fontSize="16" fontWeight="900" fill="#1e293b">
+                            {step === 0 ? 'Espacio Muestral: 7 sobres en la mesa' : step === 1 ? 'Casos Favorables: 3 sobres con postales' : 'Probabilidad: 3 de 7 sobres (3/7)'}
+                        </text>
+                        {/* Mesa geométrica */}
+                        <rect x="28" y="46" width="464" height="170" rx="20" fill="#fefce8" stroke="#ca8a04" strokeWidth="3.5" />
+                        {Array.from({ length: 7 }).map((_, i) => {
+                            const row = i < 4 ? 0 : 1;
+                            const col = row === 0 ? i : i - 4;
+                            const x = row === 0 ? 52 + col * 108 : 106 + col * 108;
+                            const y = row === 0 ? 64 : 140;
+                            const hasPostcard = i < 3;
+                            const highlight = showFav && hasPostcard;
+                            const dim = showFav && !hasPostcard;
+                            return (
+                                <g key={i} opacity={dim ? 0.35 : 1} className={highlight || step === 0 ? "svg-pop" : ""} style={{ animationDelay: `${i * 0.05}s` }}>
+                                    <rect x={x} y={y} width="90" height="58" rx="8" fill={highlight ? "#fde047" : "#e2e8f0"} stroke={highlight ? "#b45309" : "#64748b"} strokeWidth={highlight ? "3.5" : "2.5"} />
+                                    <path d={`M ${x} ${y} L ${x + 45} ${y + 30} L ${x + 90} ${y}`} fill="none" stroke={highlight ? "#b45309" : "#64748b"} strokeWidth="2.5" />
+                                    {highlight && (
+                                        <g>
+                                            <rect x={x + 26} y={y + 18} width="38" height="26" rx="4" fill="#fffbeb" stroke="#d97706" strokeWidth="2" />
+                                            <polygon points={`${x+32},${y+40} ${x+42},${y+27} ${x+52},${y+40}`} fill="#10b981" />
+                                            <circle cx={x + 54} cy={y + 25} r="4" fill="#f59e0b" />
+                                        </g>
+                                    )}
+                                    <text x={x + 45} y={y + 52} textAnchor="middle" fontSize="11" fontWeight="900" fill={highlight ? "#92400e" : "#475569"}>
+                                        {highlight ? 'POSTAL' : `Sobre ${i + 1}`}
+                                    </text>
+                                </g>
+                            );
+                        })}
+                        <FractionBarSVG x={45} y={260} w={430} h={40} total={7} litIndices={litIdx} color={step === 0 ? "#6366f1" : "#f59e0b"} label="Barra fraccionaria (7 partes):" subLabel={step === 0 ? "n(Ω) = 7" : "P(A) = 3/7"} />
+                        <text x="260" y="328" textAnchor="middle" fontSize="13" fontWeight="800" fill="#64748b">3 sobres dorados con postal / 7 sobres totales</text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 3: 4 Niños en un concurso (Círculo de 4 cuadrantes) ---
+            if (exerciseId === 3) {
+                const kids = [
+                    { name: 'Niño 1', color: '#3b82f6', start: 0, end: 90, tx: 315, ty: 120 },
+                    { name: 'Niño 2', color: '#10b981', start: 90, end: 180, tx: 315, ty: 225 },
+                    { name: 'Niño 3', color: '#f59e0b', start: 180, end: 270, tx: 205, ty: 225 },
+                    { name: 'Niño 4', color: '#ec4899', start: 270, end: 360, tx: 205, ty: 120 }
+                ];
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="Círculo dividido en 4 sectores iguales">
+                        <text x="260" y="26" textAnchor="middle" fontSize="16" fontWeight="900" fill="#1e293b">
+                            {step === 0 ? '4 Niños Equiprobables: 4 sectores de 90°' : step === 1 ? '1 Sector Favorable para cada niño' : 'Probabilidad: 1/4 = 25%'}
+                        </text>
+                        <g>
+                            {kids.map((k, i) => {
+                                const isWinner = step >= 1 && i === 0;
+                                const isDim = step >= 1 && i !== 0;
+                                const offset = isWinner ? 'translate(8, -8)' : '';
+                                return (
+                                    <g key={i} transform={offset} opacity={isDim ? 0.32 : 1} className="svg-pop" style={{ animationDelay: `${i * 0.08}s` }}>
+                                        <path d={describeSector(260, 172, 118, k.start, k.end)} fill={k.color} stroke="#ffffff" strokeWidth="5" />
+                                        <text x={k.tx} y={k.ty} textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">{k.name}</text>
+                                        {isWinner && (
+                                            <g className="animate-pulseGlow">
+                                                <polygon points="315,134 320,146 333,147 323,156 326,169 315,162 304,169 307,156 297,147 310,146" fill="#fde047" stroke="#b45309" strokeWidth="2" />
+                                            </g>
+                                        )}
+                                    </g>
+                                );
+                            })}
+                            <circle cx="260" cy="172" r="24" fill="#ffffff" stroke="#1e293b" strokeWidth="4" />
+                            <text x="260" y="178" textAnchor="middle" fontSize="15" fontWeight="900" fill="#0f172a">
+                                {step === 0 ? 'Ω=4' : '1/4'}
+                            </text>
+                        </g>
+                        <rect x="90" y="305" width="340" height="32" rx="12" fill={step === 2 ? "#fef08a" : "#f1f5f9"} stroke={step === 2 ? "#eab308" : "#cbd5e1"} strokeWidth="2.5" />
+                        <text x="260" y="326" textAnchor="middle" fontSize="15" fontWeight="900" fill="#1e293b">
+                            {step === 0 ? 'Cada cuadrante mide exactamente 90°' : step === 1 ? '1 sector ganador de 4 posibles' : '1/4 = 0.25 = 25% para cada participante'}
+                        </text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 4: 15 Árboles frutales (3 naranjos, 12 no naranjos -> 4/5) ---
+            if (exerciseId === 4) {
+                const showNoNaranjo = step >= 1;
+                const showSimplify = step >= 3;
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="15 árboles frutales, 3 naranjos y 12 otros">
+                        <text x="260" y="24" textAnchor="middle" fontSize="15" fontWeight="900" fill="#1e293b">
+                            {step === 0 ? 'Terreno: Cuadrícula 3×5 = 15 árboles' : step === 1 ? 'Descartamos 3 naranjos → Quedan 12 favorables' : step === 2 ? 'Fracción inicial: 12 / 15' : 'Simplificamos agrupando de 3 en 3 → 4 / 5'}
+                        </text>
+                        <rect x="35" y="36" width="450" height="195" rx="18" fill="#f0fdf4" stroke="#16a34a" strokeWidth="3" />
+                        {/* Agrupaciones verticales de 3 árboles al simplificar */}
+                        {showSimplify && [0,1,2,3,4].map(col => (
+                            <rect
+                                key={col}
+                                x={56 + col * 84}
+                                y={44}
+                                width={72}
+                                height={178}
+                                rx="12"
+                                fill={col === 0 ? "#fee2e2" : "#dcfce7"}
+                                stroke={col === 0 ? "#ef4444" : "#15803d"}
+                                strokeWidth="3"
+                                strokeDasharray="6 4"
+                                className="svg-pop"
+                            />
+                        ))}
+                        {/* 3 filas x 5 columnas: columna 0 son los 3 naranjos */}
+                        {Array.from({ length: 15 }).map((_, i) => {
+                            const col = Math.floor(i / 3);
+                            const row = i % 3;
+                            const cx = 92 + col * 84;
+                            const cy = 74 + row * 58;
+                            const isOrange = col === 0;
+                            return (
+                                <g key={i} opacity={showNoNaranjo && isOrange ? 0.45 : 1} className="svg-pop" style={{ animationDelay: `${i * 0.02}s` }}>
+                                    <rect x={cx - 5} y={cy + 8} width="10" height="14" rx="2" fill="#92400e" />
+                                    <polygon points={`${cx},${cy - 20} ${cx - 20},${cy + 12} ${cx + 20},${cy + 12}`} fill={isOrange ? "#f97316" : "#22c55e"} stroke={isOrange ? "#c2410c" : "#166534"} strokeWidth="2" />
+                                    {isOrange && <circle cx={cx} cy={cy - 2} r="4" fill="#fef08a" />}
+                                    {showNoNaranjo && isOrange && (
+                                        <g stroke="#dc2626" strokeWidth="3.5" strokeLinecap="round">
+                                            <line x1={cx - 16} y1={cy - 16} x2={cx + 16} y2={cy + 16} />
+                                            <line x1={cx + 16} y1={cy - 16} x2={cx - 16} y2={cy + 16} />
+                                        </g>
+                                    )}
+                                </g>
+                            );
+                        })}
+                        {showSimplify ? (
+                            <FractionBarSVG x={45} y={266} w={430} h={38} total={5} litIndices={[1,2,3,4]} color="#16a34a" label="5 grupos de 3 árboles (4 grupos verdes):" subLabel="12/15 = 4/5" />
+                        ) : (
+                            <FractionBarSVG x={45} y={266} w={430} h={38} total={15} litIndices={step === 0 ? Array.from({length:15},(_,k)=>k) : Array.from({length:12},(_,k)=>k+3)} color={step === 0 ? "#0ea5e9" : "#22c55e"} label="15 árboles totales:" subLabel={step === 0 ? "n(Ω) = 15" : "12 / 15"} />
+                        )}
+                        <text x="260" y="332" textAnchor="middle" fontSize="13" fontWeight="800" fill="#64748b">
+                            {showSimplify ? 'Cada columna = 3 árboles → 4 columnas verdes de 5' : 'Columna 1: 3 naranjos | Columnas 2-5: 12 otros frutales'}
+                        </text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 5: 15 Paletas en una bolsa (3 limón, 8 fresa, 2 chocolate, 2 manzana) ---
+            if (exerciseId === 5) {
+                const pops = [
+                    ...Array(3).fill({ type: 'limon', fill: '#84cc16', stroke: '#4d7c0f', tag: 'L' }),
+                    ...Array(8).fill({ type: 'fresa', fill: '#f43f5e', stroke: '#be123c', tag: 'F' }),
+                    ...Array(2).fill({ type: 'choc', fill: '#78350f', stroke: '#451a03', tag: 'Ch' }),
+                    ...Array(2).fill({ type: 'manz', fill: '#ef4444', stroke: '#991b1b', tag: 'M' })
+                ];
+                const targets = ['all', 'limon', 'fresa', 'choc', 'manz'];
+                const target = targets[step] || 'all';
+                const litIdx = pops.map((p, i) => (target === 'all' || p.type === target) ? i : -1).filter(i => i >= 0);
+                const info = [
+                    { t: 'Bolsa con 15 paletas (3 filas × 5)', barColor: '#6366f1', frac: '15/15' },
+                    { t: 'a) Limón: 3 de 15 → 1/5', barColor: '#84cc16', frac: '3/15 = 1/5' },
+                    { t: 'b) Fresa: 8 de 15', barColor: '#f43f5e', frac: '8/15' },
+                    { t: 'c) Chocolate: 2 de 15', barColor: '#78350f', frac: '2/15' },
+                    { t: 'd) Manzana: 2 de 15', barColor: '#ef4444', frac: '2/15' }
+                ][step];
+
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="15 paletas de sabores">
+                        <text x="260" y="24" textAnchor="middle" fontSize="15" fontWeight="900" fill="#1e293b">{info.t}</text>
+                        <rect x="40" y="38" width="440" height="190" rx="22" fill="#fffbeb" stroke="#d97706" strokeWidth="3.5" />
+                        {pops.map((p, i) => {
+                            const row = Math.floor(i / 5);
+                            const col = i % 5;
+                            const cx = 92 + col * 84;
+                            const cy = 68 + row * 60;
+                            const active = target === 'all' || p.type === target;
+                            return (
+                                <g key={i} opacity={active ? 1 : 0.18} className={active ? "svg-pop" : ""} style={{ animationDelay: `${i * 0.02}s` }}>
+                                    <line x1={cx} y1={cy + 15} x2={cx} y2={cy + 36} stroke="#cbd5e1" strokeWidth="5" strokeLinecap="round" />
+                                    {active && target !== 'all' && <circle cx={cx} cy={cy} r="22" fill="none" stroke="#eab308" strokeWidth="3" strokeDasharray="4 3" />}
+                                    <circle cx={cx} cy={cy} r="17" fill={p.fill} stroke={p.stroke} strokeWidth="2.5" />
+                                    <text x={cx} y={cy + 4} textAnchor="middle" fontSize="11" fontWeight="900" fill="#ffffff">{p.tag}</text>
+                                </g>
+                            );
+                        })}
+                        <FractionBarSVG x={40} y={266} w={440} h={38} total={target === 'limon' ? 5 : 15} litIndices={target === 'limon' ? [0] : litIdx} color={info.barColor} label={target === 'limon' ? "Simplificado (5 grupos de 3):" : "15 paletas totales:"} subLabel={`P = ${info.frac}`} />
+                        <text x="260" y="332" textAnchor="middle" fontSize="13" fontWeight="800" fill="#64748b">3 Limón + 8 Fresa + 2 Chocolate + 2 Manzana = 15</text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 6: Frasco con 14 caramelos (3 miel, 5 fresa, 6 menta) ---
+            if (exerciseId === 6) {
+                const candies = [
+                    ...Array(3).fill({ type: 'miel', fill: '#f59e0b', stroke: '#b45309', tag: 'Mi' }),
+                    ...Array(5).fill({ type: 'fresa', fill: '#ec4899', stroke: '#be185d', tag: 'Fr' }),
+                    ...Array(6).fill({ type: 'menta', fill: '#14b8a6', stroke: '#0f766e', tag: 'Me' })
+                ];
+                const activeSet = [
+                    ['miel', 'fresa', 'menta'],
+                    ['miel', 'fresa', 'menta'],
+                    ['fresa', 'menta'],
+                    ['miel', 'menta'],
+                    []
+                ][step] || [];
+                const litIdx = candies.map((c, i) => activeSet.includes(c.type) ? i : -1).filter(i => i >= 0);
+                const info = [
+                    { t: 'Frasco: 3 Miel + 5 Fresa + 6 Menta = 14', color: '#6366f1', frac: '14/14' },
+                    { t: 'a) Miel ∪ Fresa ∪ Menta = ¡Evento Seguro!', color: '#10b981', frac: '14/14 = 1' },
+                    { t: 'b1) Fresa ∪ Menta: 5 + 6 = 11', color: '#ec4899', frac: '11/14' },
+                    { t: 'b2) Menta ∪ Miel: 6 + 3 = 9', color: '#14b8a6', frac: '9/14' },
+                    { t: 'c) Chocolate: 0 caramelos (Evento Imposible)', color: '#ef4444', frac: '0/14 = 0' }
+                ][step];
+
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="Frasco con 14 caramelos">
+                        <text x="260" y="24" textAnchor="middle" fontSize="15" fontWeight="900" fill="#1e293b">{info.t}</text>
+                        {/* Tapa y frasco geométrico */}
+                        <rect x="175" y="34" width="170" height="18" rx="6" fill="#94a3b8" stroke="#475569" strokeWidth="2.5" />
+                        <rect x="55" y="52" width="410" height="175" rx="28" fill="#f8fafc" stroke="#64748b" strokeWidth="4" />
+                        {/* Marco luminoso del subconjunto */}
+                        {step === 1 && <rect x="64" y="60" width="392" height="158" rx="22" fill="#dcfce7" opacity="0.5" stroke="#10b981" strokeWidth="4" strokeDasharray="8 4" />}
+                        {candies.map((c, i) => {
+                            const row = Math.floor(i / 7);
+                            const col = i % 7;
+                            const cx = 92 + col * 56;
+                            const cy = 104 + row * 72;
+                            const active = activeSet.includes(c.type);
+                            return (
+                                <g key={i} opacity={active ? 1 : 0.16} className={active ? "svg-pop" : ""} style={{ animationDelay: `${i * 0.025}s` }}>
+                                    {active && step > 0 && <ellipse cx={cx} cy={cy} rx="25" ry="20" fill="none" stroke="#eab308" strokeWidth="3" />}
+                                    <ellipse cx={cx} cy={cy} rx="20" ry="15" fill={c.fill} stroke={c.stroke} strokeWidth="2.5" />
+                                    <text x={cx} y={cy + 4} textAnchor="middle" fontSize="11" fontWeight="900" fill="#ffffff">{c.tag}</text>
+                                </g>
+                            );
+                        })}
+                        {step === 4 && (
+                            <g className="svg-pop">
+                                <rect x="135" y="110" width="250" height="54" rx="14" fill="#fef2f2" stroke="#ef4444" strokeWidth="3.5" />
+                                <text x="260" y="143" textAnchor="middle" fontSize="17" fontWeight="900" fill="#dc2626">∅ ¡0 caramelos de chocolate!</text>
+                            </g>
+                        )}
+                        <FractionBarSVG x={55} y={266} w={410} h={36} total={14} litIndices={litIdx} color={info.color} label="Unión en el espacio de 14:" subLabel={`P = ${info.frac}`} />
+                        <text x="260" y="330" textAnchor="middle" fontSize="13" fontWeight="800" fill="#64748b">Mi: Miel (3) | Fr: Fresa (5) | Me: Menta (6)</text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 7: Matriz 4×5 de 20 bolas (5 rojas, 3 verdes, 8 negras, 4 blancas) ---
+            if (exerciseId === 7) {
+                const balls = [
+                    ...Array(5).fill({ type: 'roja', fill: '#ef4444', stroke: '#b91c1c', tag: 'R' }),
+                    ...Array(3).fill({ type: 'verde', fill: '#22c55e', stroke: '#15803d', tag: 'V' }),
+                    ...Array(8).fill({ type: 'negra', fill: '#1e293b', stroke: '#0f172a', tag: 'N' }),
+                    ...Array(4).fill({ type: 'blanca', fill: '#ffffff', stroke: '#334155', tag: 'B' })
+                ];
+                const targets = ['all', 'blanca', 'negra', 'verde', 'roja'];
+                const target = targets[step] || 'all';
+                const info = [
+                    { t: 'Matriz 4×5 = 20 bolas totales', barTotal: 20, barLit: Array.from({length:20},(_,i)=>i), color: '#6366f1', frac: '20/20' },
+                    { t: 'a) Blanca: 4/20 → Simplifica a 1/5', barTotal: 5, barLit: [0], color: '#64748b', frac: '4/20 = 1/5' },
+                    { t: 'b) Negra: 8/20 → Simplifica a 2/5', barTotal: 5, barLit: [0,1], color: '#1e293b', frac: '8/20 = 2/5' },
+                    { t: 'c) Verde: 3/20 (Irreducible)', barTotal: 20, barLit: [5,6,7], color: '#22c55e', frac: '3/20' },
+                    { t: 'd) Roja: 5/20 → Simplifica a 1/4', barTotal: 4, barLit: [0], color: '#ef4444', frac: '5/20 = 1/4' }
+                ][step];
+
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="Matriz de 20 bolas">
+                        <text x="260" y="24" textAnchor="middle" fontSize="15" fontWeight="900" fill="#1e293b">{info.t}</text>
+                        <rect x="60" y="36" width="400" height="192" rx="20" fill="#f1f5f9" stroke="#475569" strokeWidth="3.5" />
+                        {balls.map((b, i) => {
+                            const row = Math.floor(i / 5);
+                            const col = i % 5;
+                            const cx = 104 + col * 78;
+                            const cy = 66 + row * 44;
+                            const active = target === 'all' || b.type === target;
+                            return (
+                                <g key={i} opacity={active ? 1 : 0.16} className={active ? "svg-pop" : ""} style={{ animationDelay: `${i * 0.015}s` }}>
+                                    {active && target !== 'all' && <circle cx={cx} cy={cy} r="20" fill="none" stroke="#eab308" strokeWidth="3" />}
+                                    <circle cx={cx} cy={cy} r="15" fill={b.fill} stroke={b.stroke} strokeWidth="2.5" />
+                                    <text x={cx} y={cy + 4} textAnchor="middle" fontSize="11" fontWeight="900" fill={b.type === 'blanca' ? '#0f172a' : '#ffffff'}>{b.tag}</text>
+                                </g>
+                            );
+                        })}
+                        <FractionBarSVG x={50} y={266} w={420} h={36} total={info.barTotal} litIndices={info.barLit} color={info.color} label="Equivalencia geométrica:" subLabel={`P = ${info.frac}`} />
+                        <text x="260" y="330" textAnchor="middle" fontSize="13" fontWeight="800" fill="#64748b">5 Rojas + 3 Verdes + 8 Negras + 4 Blancas = 20</text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 8: Baraja de 52 cartas (4×13) - Probabilidad de As ---
+            if (exerciseId === 8) {
+                const suits = [
+                    { sym: '♠', color: '#0f172a' },
+                    { sym: '♥', color: '#dc2626' },
+                    { sym: '♦', color: '#dc2626' },
+                    { sym: '♣', color: '#0f172a' }
+                ];
+                const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+                const showAces = step >= 1;
+                const showSimp = step >= 3;
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="Baraja de 52 cartas destacando los 4 ases">
+                        <text x="260" y="24" textAnchor="middle" fontSize="15" fontWeight="900" fill="#1e293b">
+                            {step === 0 ? 'Baraja Inglesa: 4 palos × 13 cartas = 52' : step === 1 ? '4 Ases (Columna 1): A♠, A♥, A♦, A♣' : step === 2 ? 'Probabilidad: 4 / 52' : 'Simplificado: 1 columna de 13 → 1 / 13'}
+                        </text>
+                        <rect x="22" y="38" width="476" height="195" rx="16" fill="#f8fafc" stroke="#334155" strokeWidth="3" />
+                        {showAces && (
+                            <rect x="46" y="46" width="36" height="178" rx="8" fill="#fef08a" stroke="#eab308" strokeWidth="3" className="svg-pop" />
+                        )}
+                        {suits.map((s, r) => (
+                            <g key={r}>
+                                <text x="34" y={74 + r * 43} textAnchor="middle" fontSize="16" fontWeight="900" fill={s.color}>{s.sym}</text>
+                                {ranks.map((rk, c) => {
+                                    const isAce = c === 0;
+                                    const x = 50 + c * 34;
+                                    const y = 52 + r * 43;
+                                    const active = !showAces || isAce;
+                                    return (
+                                        <g key={c} opacity={active ? 1 : 0.28}>
+                                            <rect x={x} y={y} width="28" height="35" rx="4" fill={isAce && showAces ? "#fde047" : "#ffffff"} stroke={isAce && showAces ? "#b45309" : "#94a3b8"} strokeWidth={isAce && showAces ? "2.5" : "1.5"} />
+                                            <text x={x + 14} y={y + 22} textAnchor="middle" fontSize="11" fontWeight="900" fill={s.color}>{rk}</text>
+                                        </g>
+                                    );
+                                })}
+                            </g>
+                        ))}
+                        <FractionBarSVG x={42} y={266} w={436} h={36} total={13} litIndices={showAces ? [0] : Array.from({length:13},(_,k)=>k)} color={showAces ? "#eab308" : "#6366f1"} label="13 columnas iguales (1 columna de Ases):" subLabel={showSimp ? "4/52 = 1/13" : step === 0 ? "52 cartas" : "4 / 52"} />
+                        <text x="260" y="330" textAnchor="middle" fontSize="13" fontWeight="800" fill="#64748b">Cada columna tiene 4 cartas → 1 columna de 13 = 1/13</text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 9: Rey o Reina de diamantes o corazones (6/52 = 3/26) ---
+            if (exerciseId === 9) {
+                const suits = [
+                    { sym: '♠', color: '#0f172a', red: false },
+                    { sym: '♥', color: '#dc2626', red: true },
+                    { sym: '♦', color: '#dc2626', red: true },
+                    { sym: '♣', color: '#0f172a', red: false }
+                ];
+                const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+                const showFav = step >= 1;
+                const showSimp = step >= 3;
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="Baraja destacando 4 Reyes y 2 Reinas rojas">
+                        <text x="260" y="24" textAnchor="middle" fontSize="14.5" fontWeight="900" fill="#1e293b">
+                            {step === 0 ? 'Espacio Muestral: 52 cartas (4×13)' : step === 1 ? '4 Reyes (K) + 2 Reinas Rojas (Q♥, Q♦) = 6' : step === 2 ? 'Probabilidad: 6 / 52' : 'Simplificando ÷ 2 → 3 / 26'}
+                        </text>
+                        <rect x="22" y="38" width="476" height="195" rx="16" fill="#f8fafc" stroke="#334155" strokeWidth="3" />
+                        {suits.map((s, r) => (
+                            <g key={r}>
+                                <text x="34" y={74 + r * 43} textAnchor="middle" fontSize="16" fontWeight="900" fill={s.color}>{s.sym}</text>
+                                {ranks.map((rk, c) => {
+                                    const isKing = rk === 'K';
+                                    const isRedQueen = rk === 'Q' && s.red;
+                                    const isFav = isKing || isRedQueen;
+                                    const x = 50 + c * 34;
+                                    const y = 52 + r * 43;
+                                    const active = !showFav || isFav;
+                                    return (
+                                        <g key={c} opacity={active ? 1 : 0.22}>
+                                            <rect
+                                                x={x} y={y} width="28" height="35" rx="4"
+                                                fill={showFav && isKing ? "#fde047" : showFav && isRedQueen ? "#fda4af" : "#ffffff"}
+                                                stroke={showFav && isFav ? "#be123c" : "#94a3b8"}
+                                                strokeWidth={showFav && isFav ? "2.5" : "1.5"}
+                                            />
+                                            <text x={x + 14} y={y + 22} textAnchor="middle" fontSize="11" fontWeight="900" fill={s.color}>{rk}</text>
+                                        </g>
+                                    );
+                                })}
+                            </g>
+                        ))}
+                        <FractionBarSVG x={30} y={266} w={460} h={34} total={26} litIndices={showFav ? [0,1,2] : Array.from({length:26},(_,k)=>k)} color={showFav ? "#e11d48" : "#6366f1"} label="Agrupando en pares (26 pares):" subLabel={showSimp ? "6/52 = 3/26" : step === 0 ? "52 cartas" : "6 / 52"} />
+                        <text x="260" y="330" textAnchor="middle" fontSize="13" fontWeight="800" fill="#64748b">Amarillo: 4 Reyes (K) | Rosa: 2 Reinas rojas (Q♥, Q♦)</text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 10: Cuadrícula 10×10 (100 boletos, 7 ganadores) ---
+            if (exerciseId === 10) {
+                const showSeven = step >= 1;
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="Cuadrícula de 100 boletos con 7 iluminados">
+                        <text x="260" y="24" textAnchor="middle" fontSize="15" fontWeight="900" fill="#1e293b">
+                            {step === 0 ? 'Rifa: Cuadrícula 10×10 = 100 boletos' : step === 1 ? '7 boletos comprados (dorados)' : 'Probabilidad: 7/100 = 7%'}
+                        </text>
+                        <rect x="125" y="36" width="270" height="270" rx="14" fill="#f8fafc" stroke="#334155" strokeWidth="3.5" />
+                        {Array.from({ length: 100 }).map((_, i) => {
+                            const row = Math.floor(i / 10);
+                            const col = i % 10;
+                            const x = 135 + col * 25;
+                            const y = 46 + row * 25;
+                            const isLit = showSeven && i < 7;
+                            return (
+                                <g key={i}>
+                                    <rect
+                                        x={x} y={y} width="21" height="21" rx="4"
+                                        fill={isLit ? "#facc15" : "#e2e8f0"}
+                                        stroke={isLit ? "#b45309" : "#cbd5e1"}
+                                        strokeWidth={isLit ? "2" : "1"}
+                                        className={isLit ? "svg-pop" : ""}
+                                        style={isLit ? { animationDelay: `${i * 0.05}s` } : {}}
+                                    />
+                                    {isLit && <text x={x + 10.5} y={y + 14.5} textAnchor="middle" fontSize="10" fontWeight="900" fill="#78350f">{i + 1}</text>}
+                                </g>
+                            );
+                        })}
+                        <text x="260" y="332" textAnchor="middle" fontSize="14" fontWeight="900" fill={step === 2 ? "#b45309" : "#64748b"}>
+                            {step === 0 ? '10 filas × 10 columnas = 100 boletos' : '7 cuadrados dorados de 100 → 7/100 (7%)'}
+                        </text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 11: 10 Caramelos (5 limón, 3 fresa, 2 naranja) - Barra + Pastel ---
+            if (exerciseId === 11) {
+                const items = [
+                    ...Array(5).fill({ type: 'limon', fill: '#84cc16', label: 'Limón' }),
+                    ...Array(3).fill({ type: 'fresa', fill: '#f43f5e', label: 'Fresa' }),
+                    ...Array(2).fill({ type: 'naranja', fill: '#f97316', label: 'Naranja' })
+                ];
+                const targets = ['all', 'limon', 'fresa', 'naranja'];
+                const target = targets[step] || 'all';
+                const info = [
+                    { t: '10 Caramelos: 5 Limón, 3 Fresa, 2 Naranja', frac: '10/10' },
+                    { t: 'Limón: 5 de 10 = 1/2 (Mitad del círculo)', frac: '5/10 = 1/2' },
+                    { t: 'Fresa: 3 de 10 = 3/10', frac: '3/10' },
+                    { t: 'Naranja: 2 de 10 = 1/5', frac: '2/10 = 1/5' }
+                ][step];
+
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="10 caramelos en gráfico circular y barra">
+                        <text x="260" y="24" textAnchor="middle" fontSize="15" fontWeight="900" fill="#1e293b">{info.t}</text>
+                        {/* Gráfico circular de 10 sectores (36° c/u) */}
+                        <g>
+                            {items.map((it, i) => {
+                                const active = target === 'all' || it.type === target;
+                                return (
+                                    <path
+                                        key={i}
+                                        d={describeSector(260, 138, 96, i * 36, (i + 1) * 36)}
+                                        fill={it.fill}
+                                        stroke="#ffffff"
+                                        strokeWidth="3"
+                                        opacity={active ? 1 : 0.2}
+                                        className={active ? "svg-pop" : ""}
+                                        style={{ animationDelay: `${i * 0.03}s` }}
+                                    />
+                                );
+                            })}
+                            <circle cx="260" cy="138" r="32" fill="#ffffff" stroke="#1e293b" strokeWidth="3.5" />
+                            <text x="260" y="143" textAnchor="middle" fontSize="14" fontWeight="900" fill="#0f172a">{info.frac.split('=')[1] || info.frac}</text>
+                        </g>
+                        {/* Barra rectangular de 10 bloques */}
+                        <g>
+                            <text x="45" y="264" fontSize="13" fontWeight="900" fill="#334155">Barra de 10 bloques:</text>
+                            <text x="475" y="264" textAnchor="end" fontSize="13" fontWeight="900" fill="#0f766e">P = {info.frac}</text>
+                            {items.map((it, i) => {
+                                const active = target === 'all' || it.type === target;
+                                return (
+                                    <rect
+                                        key={i}
+                                        x={45 + i * 43}
+                                        y={272}
+                                        width="39"
+                                        height="34"
+                                        rx="6"
+                                        fill={it.fill}
+                                        stroke={active ? "#0f172a" : "#cbd5e1"}
+                                        strokeWidth={active ? "2.5" : "1"}
+                                        opacity={active ? 1 : 0.2}
+                                    />
+                                );
+                            })}
+                        </g>
+                        <text x="260" y="332" textAnchor="middle" fontSize="13" fontWeight="800" fill="#64748b">Verde: Limón (5) | Rosa: Fresa (3) | Naranja: Naranja (2)</text>
+                    </svg>
+                );
+            }
+
+            // --- EJERCICIO 12: 60 Galletas (20 vainilla=120°, 30 choc=180°, 10 coco=60°) + 6 bloques de 10 ---
+            if (exerciseId === 12) {
+                const sectors = [
+                    { type: 'vainilla', label: 'Vainilla (20)', frac: '1/3', start: 0, end: 120, fill: '#facc15', text: '#713f12', tx: 315, ty: 118 },
+                    { type: 'choc', label: 'Chocolate (30)', frac: '1/2', start: 120, end: 300, fill: '#78350f', text: '#ffffff', tx: 222, ty: 185 },
+                    { type: 'coco', label: 'Coco (10)', frac: '1/6', start: 300, end: 360, fill: '#38bdf8', text: '#0c4a6e', tx: 228, ty: 88 }
+                ];
+                const blocks = [
+                    { type: 'vainilla', fill: '#facc15', txt: '10 V' },
+                    { type: 'vainilla', fill: '#facc15', txt: '10 V' },
+                    { type: 'choc', fill: '#78350f', txt: '10 Ch' },
+                    { type: 'choc', fill: '#78350f', txt: '10 Ch' },
+                    { type: 'choc', fill: '#78350f', txt: '10 Ch' },
+                    { type: 'coco', fill: '#38bdf8', txt: '10 Co' }
+                ];
+                const targets = ['all', 'vainilla', 'choc'];
+                const target = targets[step] || 'all';
+                const info = [
+                    { t: '60 Galletas = 6 bloques de 10 (360°)', frac: '60/60' },
+                    { t: 'Vainilla: 20/60 = 1/3 (120° del círculo)', frac: '20/60 = 1/3' },
+                    { t: 'Chocolate: 30/60 = 1/2 (180° = Mitad)', frac: '30/60 = 1/2' }
+                ][step];
+
+                return (
+                    <svg viewBox="0 0 520 350" className="w-full h-full max-h-[380px]" role="img" aria-label="60 galletas en sectores proporcionales y 6 bloques de 10">
+                        <text x="260" y="24" textAnchor="middle" fontSize="15" fontWeight="900" fill="#1e293b">{info.t}</text>
+                        <g>
+                            {sectors.map((s, i) => {
+                                const active = target === 'all' || s.type === target;
+                                return (
+                                    <g key={i} opacity={active ? 1 : 0.2} className="svg-pop" style={{ animationDelay: `${i * 0.08}s` }}>
+                                        <path d={describeSector(260, 140, 96, s.start, s.end)} fill={s.fill} stroke="#ffffff" strokeWidth="4" />
+                                        <text x={s.tx} y={s.ty} textAnchor="middle" fontSize="13" fontWeight="900" fill={s.text}>{s.frac}</text>
+                                    </g>
+                                );
+                            })}
+                            <circle cx="260" cy="140" r="24" fill="#ffffff" stroke="#1e293b" strokeWidth="3.5" />
+                            <text x="260" y="145" textAnchor="middle" fontSize="13" fontWeight="900" fill="#0f172a">60</text>
+                        </g>
+                        {/* 6 bloques de 10 galletas */}
+                        <g>
+                            <text x="45" y="264" fontSize="13" fontWeight="900" fill="#334155">6 bloques de 10 galletas:</text>
+                            <text x="475" y="264" textAnchor="end" fontSize="13" fontWeight="900" fill="#0f766e">P = {info.frac}</text>
+                            {blocks.map((b, i) => {
+                                const active = target === 'all' || b.type === target;
+                                return (
+                                    <g key={i} opacity={active ? 1 : 0.2}>
+                                        <rect x={45 + i * 72} y={272} width="66" height="36" rx="8" fill={b.fill} stroke={active ? "#0f172a" : "#cbd5e1"} strokeWidth={active ? "2.5" : "1"} />
+                                        <text x={78 + i * 72} y={295} textAnchor="middle" fontSize="12" fontWeight="900" fill={b.type === 'choc' ? '#ffffff' : '#0f172a'}>{b.txt}</text>
+                                    </g>
+                                );
+                            })}
+                        </g>
+                        <text x="260" y="332" textAnchor="middle" fontSize="13" fontWeight="800" fill="#64748b">Vainilla: 20 (120°) | Chocolate: 30 (180°) | Coco: 10 (60°)</text>
+                    </svg>
+                );
+            }
+
+            return null;
+        });
+
+        // =========================================================================
+        // 7. BASE DE DATOS DE LOS 12 EJERCICIOS DE PROBABILIDAD
+        // =========================================================================
+        const EXERCISES = [
+            // --- BLOQUE 1: ACTIVIDAD DE CLASE (1 al 6) ---
+            {
+                id: 1, block: 1, title: "Ejercicio 1", subtitle: "Bolas en una caja",
+                cardGradient: "from-blue-500/40 to-cyan-600/40", badgeColor: "bg-blue-500",
+                previewLatex: String.raw`n(\Omega) = 11 \implies P(\text{verde}) = \frac{4}{11}`,
+                enunciado: () => (
+                    <span>
+                        Si en una caja hay <strong>3 bolas negras</strong>, <strong>3 amarillas</strong>, <strong>1 azul</strong> y <strong>4 verdes</strong>, ¿cuál es la probabilidad de sacar sin mirar: <strong>a)</strong> roja, <strong>b)</strong> amarilla, <strong>c)</strong> azul, <strong>d)</strong> verde?
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Espacio Muestral",
+                        latex: String.raw`n(\Omega) = 3 + 3 + 1 + 4 = 11 \text{ bolas}`,
+                        robotSpeech: "Primero sumamos todas las bolas dentro de la caja para hallar el total de casos posibles n(Ω) = 11."
+                    },
+                    {
+                        badge: "Paso 2 · Inciso a) Bola roja",
+                        latex: String.raw`P(\text{roja}) = \frac{0}{11} = 0 \quad (\text{Evento imposible})`,
+                        robotSpeech: "No existe ninguna bola roja en la caja (0 casos favorables). Cuando la probabilidad es 0, es un evento imposible."
+                    },
+                    {
+                        badge: "Paso 3 · Inciso b) Bola amarilla",
+                        latex: String.raw`P(\text{amarilla}) = \frac{3}{11}`,
+                        robotSpeech: "Hay 3 bolas amarillas de un total de 11. Por la regla de Laplace, la probabilidad es 3/11."
+                    },
+                    {
+                        badge: "Paso 4 · Inciso c) Bola azul",
+                        latex: String.raw`P(\text{azul}) = \frac{1}{11}`,
+                        robotSpeech: "Solo hay 1 bola azul entre las 11 bolas de la caja. Entonces P(azul) = 1/11."
+                    },
+                    {
+                        badge: "Paso 5 · Inciso d) Bola verde",
+                        latex: String.raw`P(\text{verde}) = \frac{4}{11} \implies \text{Rpta: } 0;\; \frac{3}{11};\; \frac{1}{11};\; \frac{4}{11}`,
+                        robotSpeech: "¡Excelente! Hay 4 bolas verdes de 11 totales, así que P(verde) = 4/11. ¡Completamos los 4 incisos!"
+                    }
+                ]
+            },
+            {
+                id: 2, block: 1, title: "Ejercicio 2", subtitle: "Sobres con postales",
+                cardGradient: "from-amber-500/40 to-orange-600/40", badgeColor: "bg-amber-500",
+                previewLatex: String.raw`P(A) = \frac{3}{7}`,
+                enunciado: () => (
+                    <span>
+                        Hay <strong>7 sobres</strong> en una mesa, <strong>3 de los sobres</strong> contienen postales. ¿Cuál es la probabilidad de escoger uno de los sobres que contiene postales?
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Casos Totales",
+                        latex: String.raw`n(\Omega) = 7 \text{ sobres en la mesa}`,
+                        robotSpeech: "Contamos todos los sobres disponibles sobre la mesa: nuestro espacio muestral es n(Ω) = 7."
+                    },
+                    {
+                        badge: "Paso 2 · Casos Favorables",
+                        latex: String.raw`n(A) = 3 \text{ sobres con postales}`,
+                        robotSpeech: "El evento A es sacar un sobre que tenga postal. Como 3 sobres cumplen esto, n(A) = 3."
+                    },
+                    {
+                        badge: "Paso 3 · Regla de Laplace",
+                        latex: String.raw`P(A) = \frac{n(A)}{n(\Omega)} = \frac{3}{7}`,
+                        robotSpeech: "Dividimos los casos favorables entre los totales: P(A) = 3/7. Como 3 y 7 son primos, ¡ya está simplificado!"
+                    }
+                ]
+            },
+            {
+                id: 3, block: 1, title: "Ejercicio 3", subtitle: "Concurso de 4 niños",
+                cardGradient: "from-emerald-500/40 to-teal-600/40", badgeColor: "bg-emerald-500",
+                previewLatex: String.raw`P(A) = \frac{1}{4} = 25\%`,
+                enunciado: () => (
+                    <span>
+                        Si <strong>cuatro niños</strong> aspiran a ganar un premio en un concurso, ¿qué probabilidad tiene <strong>cada uno</strong> de ganar el premio?
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Espacio Muestral",
+                        latex: String.raw`n(\Omega) = 4 \text{ niños (equiprobables)}`,
+                        robotSpeech: "Hay 4 participantes con la misma oportunidad de ganar. Por eso dividimos el círculo en 4 sectores iguales."
+                    },
+                    {
+                        badge: "Paso 2 · Casos Favorables",
+                        latex: String.raw`n(A) = 1 \text{ ganador posible por niño}`,
+                        robotSpeech: "Para que un niño específico gane el premio, solo existe 1 caso favorable a su favor."
+                    },
+                    {
+                        badge: "Paso 3 · Probabilidad Final",
+                        latex: String.raw`P(A) = \frac{1}{4} = 0.25 = 25\%`,
+                        robotSpeech: "¡Listo! Cada niño tiene una probabilidad de 1/4, lo que equivale al 25% de ganar el premio."
+                    }
+                ]
+            },
+            {
+                id: 4, block: 1, title: "Ejercicio 4", subtitle: "Árboles frutales",
+                cardGradient: "from-lime-500/40 to-green-600/40", badgeColor: "bg-lime-600",
+                previewLatex: String.raw`P(\text{no naranjo}) = \frac{12}{15} = \frac{4}{5}`,
+                enunciado: () => (
+                    <span>
+                        En un terreno hay <strong>15 árboles frutales</strong>, <strong>3 de ellos</strong> son naranjos. Si un vendaval derriba un árbol, ¿cuál es la probabilidad de que <strong>no sea un naranjo</strong>?
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Total de Árboles",
+                        latex: String.raw`n(\Omega) = 15 \text{ árboles frutales}`,
+                        robotSpeech: "Ubicamos los 15 árboles en una cuadrícula de 3×5. Ese es nuestro espacio muestral total."
+                    },
+                    {
+                        badge: "Paso 2 · Evento Complementario",
+                        latex: String.raw`n(A) = 15 - 3 = 12 \text{ árboles que NO son naranjos}`,
+                        robotSpeech: "Como 3 son naranjos y buscamos que NO sea naranjo, restamos 15 - 3 = 12 casos favorables."
+                    },
+                    {
+                        badge: "Paso 3 · Regla de Laplace",
+                        latex: String.raw`P(\text{no naranjo}) = \frac{12}{15}`,
+                        robotSpeech: "Formamos la fracción de probabilidad: 12 árboles favorables entre 15 árboles en total."
+                    },
+                    {
+                        badge: "Paso 4 · Simplificación (÷3)",
+                        latex: String.raw`P(\text{no naranjo}) = \frac{12 \div 3}{15 \div 3} = \frac{4}{5}`,
+                        robotSpeech: "¡Mira el gráfico! Al agrupar los árboles de 3 en 3, vemos claramente que 4 de los 5 grupos no son naranjos: 4/5."
+                    }
+                ]
+            },
+            {
+                id: 5, block: 1, title: "Ejercicio 5", subtitle: "Paletas en una bolsa",
+                cardGradient: "from-rose-500/40 to-pink-600/40", badgeColor: "bg-rose-500",
+                previewLatex: String.raw`P(l)=\frac{1}{5},\; P(f)=\frac{8}{15}`,
+                enunciado: () => (
+                    <span>
+                        En una bolsa tengo <strong>15 paletas</strong>: 3 de limón, 8 de fresa, 2 de chocolate y 2 de manzana. Halla la probabilidad de sacar: <strong>a)</strong> Limón <MathDisplay inline latex="P(l)" />, <strong>b)</strong> Fresa <MathDisplay inline latex="P(f)" />, <strong>c)</strong> Chocolate <MathDisplay inline latex="P(ch)" />, <strong>d)</strong> Manzana <MathDisplay inline latex="P(m)" />.
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Total de Paletas",
+                        latex: String.raw`n(\Omega) = 3 + 8 + 2 + 2 = 15 \text{ paletas}`,
+                        robotSpeech: "Verificamos el total en la bolsa: 3 + 8 + 2 + 2 = 15 paletas de igual forma y tamaño."
+                    },
+                    {
+                        badge: "Paso 2 · a) Limón P(l)",
+                        latex: String.raw`P(l) = \frac{3}{15} = \frac{3 \div 3}{15 \div 3} = \frac{1}{5}`,
+                        robotSpeech: "Hay 3 paletas de limón de 15. Simplificamos sacando tercia y obtenemos P(l) = 1/5."
+                    },
+                    {
+                        badge: "Paso 3 · b) Fresa P(f)",
+                        latex: String.raw`P(f) = \frac{8}{15}`,
+                        robotSpeech: "Para fresa tenemos 8 paletas favorables. Como 8 y 15 no tienen divisores comunes, queda 8/15."
+                    },
+                    {
+                        badge: "Paso 4 · c) Chocolate P(ch)",
+                        latex: String.raw`P(ch) = \frac{2}{15}`,
+                        robotSpeech: "Hay 2 paletas de chocolate entre 15 totales: P(ch) = 2/15."
+                    },
+                    {
+                        badge: "Paso 5 · d) Manzana P(m)",
+                        latex: String.raw`P(m) = \frac{2}{15} \implies \text{Rpta: } \frac{1}{5};\; \frac{8}{15};\; \frac{2}{15};\; \frac{2}{15}`,
+                        robotSpeech: "También hay 2 paletas de manzana, así que P(m) = 2/15. ¡Todas las probabilidades listas!"
+                    }
+                ]
+            },
+            {
+                id: 6, block: 1, title: "Ejercicio 6", subtitle: "Caramelos en un frasco",
+                cardGradient: "from-teal-500/40 to-cyan-600/40", badgeColor: "bg-teal-500",
+                previewLatex: String.raw`a)\; 1 \quad b)\; \frac{11}{14},\; \frac{9}{14} \quad c)\; 0`,
+                enunciado: () => (
+                    <span>
+                        En un frasco hay <strong>14 caramelos</strong>: 3 de miel, 5 de fresa y 6 de menta. Al sacar uno sin mirar: <strong>a)</strong> ¿miel, fresa o menta? <strong>b)</strong> ¿fresa o menta; menta o miel? <strong>c)</strong> ¿chocolate?
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Espacio Muestral",
+                        latex: String.raw`n(\Omega) = 3 + 5 + 6 = 14 \text{ caramelos}`,
+                        robotSpeech: "En el frasco hay un total de 14 caramelos distribuidos en 3 sabores: miel, fresa y menta."
+                    },
+                    {
+                        badge: "Paso 2 · a) Miel, fresa o menta",
+                        latex: String.raw`P(\text{Mi} \cup \text{Fr} \cup \text{Me}) = \frac{3 + 5 + 6}{14} = \frac{14}{14} = 1`,
+                        robotSpeech: "Al incluir los tres sabores del frasco, cubrimos el 100% de los casos. ¡Es un Evento Seguro (P = 1)!"
+                    },
+                    {
+                        badge: "Paso 3 · b1) Fresa o menta",
+                        latex: String.raw`P(\text{Fr} \cup \text{Me}) = \frac{5 + 6}{14} = \frac{11}{14}`,
+                        robotSpeech: "La palabra 'o' significa unión: sumamos los 5 de fresa más los 6 de menta, dando 11/14."
+                    },
+                    {
+                        badge: "Paso 4 · b2) Menta o miel",
+                        latex: String.raw`P(\text{Me} \cup \text{Mi}) = \frac{6 + 3}{14} = \frac{9}{14}`,
+                        robotSpeech: "Ahora unimos menta (6) con miel (3): 6 + 3 = 9 caramelos favorables de 14 totales → 9/14."
+                    },
+                    {
+                        badge: "Paso 5 · c) Caramelo de chocolate",
+                        latex: String.raw`P(\text{chocolate}) = \frac{0}{14} = 0 \quad (\text{Evento imposible})`,
+                        robotSpeech: "No hay caramelos de chocolate en el frasco, por lo tanto la probabilidad es 0. ¡Reto completado!"
+                    }
+                ]
+            },
+
+            // --- BLOQUE 2: PRÁCTICA ADICIONAL (7 al 12) ---
+            {
+                id: 7, block: 2, title: "Ejercicio 7", subtitle: "Caja de 20 bolas",
+                cardGradient: "from-indigo-500/40 to-violet-600/40", badgeColor: "bg-indigo-500",
+                previewLatex: String.raw`\frac{1}{5};\; \frac{2}{5};\; \frac{3}{20};\; \frac{1}{4}`,
+                enunciado: () => (
+                    <span>
+                        En una caja hay <strong>5 bolas rojas</strong>, <strong>3 verdes</strong>, <strong>8 negras</strong> y <strong>4 blancas</strong>. Halla la probabilidad de extraer sin mirar: <strong>a)</strong> Blanca, <strong>b)</strong> Negra, <strong>c)</strong> Verde, <strong>d)</strong> Roja.
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Espacio Muestral",
+                        latex: String.raw`n(\Omega) = 5 + 3 + 8 + 4 = 20 \text{ bolas}`,
+                        robotSpeech: "Sumamos todas las bolas en la matriz 4×5: hay exactamente 20 casos posibles."
+                    },
+                    {
+                        badge: "Paso 2 · a) Bola blanca",
+                        latex: String.raw`P(\text{blanca}) = \frac{4}{20} = \frac{4 \div 4}{20 \div 4} = \frac{1}{5}`,
+                        robotSpeech: "Tenemos 4 bolas blancas de 20. Simplificando entre 4, obtenemos 1/5."
+                    },
+                    {
+                        badge: "Paso 3 · b) Bola negra",
+                        latex: String.raw`P(\text{negra}) = \frac{8}{20} = \frac{8 \div 4}{20 \div 4} = \frac{2}{5}`,
+                        robotSpeech: "Hay 8 bolas negras de 20. Dividimos numerador y denominador entre 4 para obtener 2/5."
+                    },
+                    {
+                        badge: "Paso 4 · c) Bola verde",
+                        latex: String.raw`P(\text{verde}) = \frac{3}{20}`,
+                        robotSpeech: "Hay 3 bolas verdes de 20. Como 3 y 20 no se pueden simplificar, el resultado es 3/20."
+                    },
+                    {
+                        badge: "Paso 5 · d) Bola roja",
+                        latex: String.raw`P(\text{roja}) = \frac{5}{20} = \frac{5 \div 5}{20 \div 5} = \frac{1}{4}`,
+                        robotSpeech: "Finalmente, 5 bolas rojas de 20 se simplifica sacando quinta: 1/4. ¡Excelente trabajo!"
+                    }
+                ]
+            },
+            {
+                id: 8, block: 2, title: "Ejercicio 8", subtitle: "As en una baraja",
+                cardGradient: "from-red-500/40 to-rose-600/40", badgeColor: "bg-red-500",
+                previewLatex: String.raw`P(\text{As}) = \frac{4}{52} = \frac{1}{13}`,
+                enunciado: () => (
+                    <span>
+                        Al extraer al azar una carta de una baraja inglesa estándar, ¿cuál es la probabilidad de que sea un <strong>as</strong>?
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Total de Cartas",
+                        latex: String.raw`n(\Omega) = 4 \text{ palos} \times 13 \text{ cartas} = 52 \text{ cartas}`,
+                        robotSpeech: "Una baraja inglesa completa tiene 4 palos (♠, ♥, ♦, ♣) y 13 cartas por palo: 52 cartas en total."
+                    },
+                    {
+                        badge: "Paso 2 · Casos Favorables",
+                        latex: String.raw`n(\text{As}) = 4 \quad (A\spadesuit,\; A\heartsuit,\; A\diamondsuit,\; A\clubsuit)`,
+                        robotSpeech: "Existe exactamente 1 As en cada palo, lo que forma la primera columna completa de 4 cartas."
+                    },
+                    {
+                        badge: "Paso 3 · Regla de Laplace",
+                        latex: String.raw`P(\text{As}) = \frac{4}{52}`,
+                        robotSpeech: "Aplicamos la fórmula de Laplace: 4 casos favorables sobre 52 casos totales."
+                    },
+                    {
+                        badge: "Paso 4 · Simplificación (÷4)",
+                        latex: String.raw`P(\text{As}) = \frac{4 \div 4}{52 \div 4} = \frac{1}{13}`,
+                        robotSpeech: "Al dividir entre 4, vemos gráficamente que los Ases representan 1 columna de las 13 columnas totales: 1/13."
+                    }
+                ]
+            },
+            {
+                id: 9, block: 2, title: "Ejercicio 9", subtitle: "Rey o Reina Roja",
+                cardGradient: "from-fuchsia-500/40 to-purple-600/40", badgeColor: "bg-fuchsia-500",
+                previewLatex: String.raw`P = \frac{4 + 2}{52} = \frac{3}{26}`,
+                enunciado: () => (
+                    <span>
+                        ¿Cuál es la probabilidad de que al extraer una carta de una baraja sea <strong>rey</strong> o <strong>reina de diamantes o corazones</strong>?
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Espacio Muestral",
+                        latex: String.raw`n(\Omega) = 52 \text{ cartas en la baraja}`,
+                        robotSpeech: "Nuevamente partimos de las 52 cartas de la baraja inglesa dispuestas en 4 filas y 13 columnas."
+                    },
+                    {
+                        badge: "Paso 2 · Casos Favorables",
+                        latex: String.raw`n(A) = \underbrace{4 \text{ Reyes}}_{K\spadesuit, K\heartsuit, K\diamondsuit, K\clubsuit} + \underbrace{2 \text{ Reinas rojas}}_{Q\diamondsuit, Q\heartsuit} = 6`,
+                        robotSpeech: "Contamos los 4 Reyes en amarillo y las 2 Reinas rojas (diamantes y corazones) en rosa: 4 + 2 = 6 cartas."
+                    },
+                    {
+                        badge: "Paso 3 · Regla de Laplace",
+                        latex: String.raw`P(A) = \frac{6}{52}`,
+                        robotSpeech: "La probabilidad inicial es 6 casos favorables entre 52 cartas totales."
+                    },
+                    {
+                        badge: "Paso 4 · Simplificación (÷2)",
+                        latex: String.raw`P(A) = \frac{6 \div 2}{52 \div 2} = \frac{3}{26}`,
+                        robotSpeech: "Sacamos mitad arriba y abajo: 6/52 se reduce a 3/26. ¡Coincide exacto con la respuesta!"
+                    }
+                ]
+            },
+            {
+                id: 10, block: 2, title: "Ejercicio 10", subtitle: "Boletos de rifa",
+                cardGradient: "from-yellow-500/40 to-amber-600/40", badgeColor: "bg-yellow-600",
+                previewLatex: String.raw`P(\text{ganar}) = \frac{7}{100} = 7\%`,
+                enunciado: () => (
+                    <span>
+                        Una persona compra <strong>7 boletos</strong> de <strong>100</strong> de una rifa. ¿Qué probabilidad tiene de ganar el premio?
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Total de Boletos",
+                        latex: String.raw`n(\Omega) = 100 \text{ boletos emitidos}`,
+                        robotSpeech: "Representamos los 100 boletos de la rifa como una cuadrícula perfecta de 10×10 cuadrados."
+                    },
+                    {
+                        badge: "Paso 2 · Boletos Comprados",
+                        latex: String.raw`n(A) = 7 \text{ boletos favorables}`,
+                        robotSpeech: "Iluminamos en color dorado los 7 boletos que compró la persona."
+                    },
+                    {
+                        badge: "Paso 3 · Probabilidad Final",
+                        latex: String.raw`P(\text{ganar}) = \frac{7}{100} = 0.07 = 7\%`,
+                        robotSpeech: "Dividimos 7 entre 100. Como 7 es primo y no divide a 100, la respuesta es 7/100 (o 7%)."
+                    }
+                ]
+            },
+            {
+                id: 11, block: 2, title: "Ejercicio 11", subtitle: "10 Caramelos de frutas",
+                cardGradient: "from-orange-500/40 to-red-500/40", badgeColor: "bg-orange-500",
+                previewLatex: String.raw`\frac{1}{2};\; \frac{3}{10};\; \frac{1}{5}`,
+                enunciado: () => (
+                    <span>
+                        Se tienen <strong>5 caramelos de limón</strong>, <strong>3 de fresa</strong> y <strong>2 de naranja</strong>. Si sacamos uno al azar, ¿cuál es la probabilidad de que sea de <strong>limón</strong>, de <strong>fresa</strong> o de <strong>naranja</strong>?
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Espacio Muestral",
+                        latex: String.raw`n(\Omega) = 5 + 3 + 2 = 10 \text{ caramelos}`,
+                        robotSpeech: "En total hay 10 caramelos. Los representamos con 10 sectores iguales en el círculo y 10 bloques en la barra."
+                    },
+                    {
+                        badge: "Paso 2 · Probabilidad de Limón",
+                        latex: String.raw`P(\text{limón}) = \frac{5}{10} = \frac{1}{2}`,
+                        robotSpeech: "5 de 10 caramelos son de limón. ¡Mira cómo ocupan exactamente la mitad (1/2) del círculo!"
+                    },
+                    {
+                        badge: "Paso 3 · Probabilidad de Fresa",
+                        latex: String.raw`P(\text{fresa}) = \frac{3}{10}`,
+                        robotSpeech: "Hay 3 caramelos de fresa de 10 totales. 3/10 ya es una fracción irreducible."
+                    },
+                    {
+                        badge: "Paso 4 · Probabilidad de Naranja",
+                        latex: String.raw`P(\text{naranja}) = \frac{2}{10} = \frac{1}{5} \implies \text{Rpta: } \frac{1}{2};\; \frac{3}{10};\; \frac{1}{5}`,
+                        robotSpeech: "Para naranja tenemos 2 de 10, que al sacar mitad nos da 1/5. ¡Muy bien resuelto!"
+                    }
+                ]
+            },
+            {
+                id: 12, block: 2, title: "Ejercicio 12", subtitle: "60 Galletas en frasco",
+                cardGradient: "from-sky-500/40 to-blue-600/40", badgeColor: "bg-sky-500",
+                previewLatex: String.raw`P(v) = \frac{1}{3};\; P(ch) = \frac{1}{2}`,
+                enunciado: () => (
+                    <span>
+                        En un frasco hay <strong>20 galletas de vainilla</strong>, <strong>30 de chocolate</strong> y <strong>10 de coco</strong>. Si saco una al azar, ¿cuál es la probabilidad de que sea de <strong>vainilla</strong>? ¿Y de <strong>chocolate</strong>?
+                    </span>
+                ),
+                steps: [
+                    {
+                        badge: "Paso 1 · Total de Galletas",
+                        latex: String.raw`n(\Omega) = 20 + 30 + 10 = 60 \text{ galletas}`,
+                        robotSpeech: "Sumamos todas las galletas: 60 en total, agrupadas en 6 bloques de 10 galletas y sectores proporcionales."
+                    },
+                    {
+                        badge: "Paso 2 · Galleta de Vainilla",
+                        latex: String.raw`P(\text{vainilla}) = \frac{20}{60} = \frac{2}{6} = \frac{1}{3}`,
+                        robotSpeech: "20 de 60 galletas son de vainilla (2 bloques de 6). Simplificando obtenemos 1/3, equivalente a 120°."
+                    },
+                    {
+                        badge: "Paso 3 · Galleta de Chocolate",
+                        latex: String.raw`P(\text{chocolate}) = \frac{30}{60} = \frac{3}{6} = \frac{1}{2} \implies \text{Rpta: } \frac{1}{3};\; \frac{1}{2}`,
+                        robotSpeech: "30 de 60 galletas son de chocolate (3 bloques de 6). ¡Exactamente la mitad del círculo (180° = 1/2)!"
+                    }
+                ]
+            }
+        ];
+
+        // =========================================================================
+        // 8. COMPONENTES DECORATIVOS: FONDO FLOTANTE, CONFETI Y ROBOT ASISTENTE
+        // =========================================================================
+        const FloatingBackground = memo(() => {
+            const symbols = ['P(A)', 'Ω', '%', '½', '¼', '⅓', '∪', '∅'];
+            const elements = Array.from({ length: 28 }).map((_, i) => ({
+                id: i,
+                symbol: symbols[i % symbols.length],
+                left: `${(i * 3.7 + Math.random() * 4) % 98}%`,
+                animationDuration: `${11 + (i % 7) * 2.2}s`,
+                animationDelay: `-${(i * 1.4) % 20}s`,
+                fontSize: `${1.2 + (i % 4) * 0.65}rem`,
+                opacity: 0.08 + (i % 3) * 0.04
+            }));
+            return (
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                    {elements.map((el) => (
+                        <div
+                            key={el.id}
+                            className="absolute text-white font-black animate-floatUp select-none drop-shadow-lg"
+                            style={{
+                                left: el.left,
+                                bottom: '-15%',
+                                fontSize: el.fontSize,
+                                opacity: el.opacity,
+                                animationDuration: el.animationDuration,
+                                animationDelay: el.animationDelay
+                            }}
+                        >
+                            {el.symbol}
+                        </div>
+                    ))}
+                </div>
+            );
+        });
+
+        const Confetti = memo(() => {
+            const colors = ['#fde047', '#60a5fa', '#f472b6', '#34d399', '#a78bfa', '#fb923c'];
+            const pieces = Array.from({ length: 110 }).map((_, i) => ({
+                id: i,
+                left: `${50 + (Math.random() * 20 - 10)}%`,
+                color: colors[i % colors.length],
+                tx: `${(Math.random() - 0.5) * 820}px`,
+                ty: `${(Math.random() - 1) * 760}px`,
+                rot: `${Math.random() * 720}deg`,
+                delay: `${Math.random() * 0.2}s`
+            }));
+            return (
+                <div className="absolute inset-0 pointer-events-none z-50 flex items-center justify-center overflow-hidden">
+                    {pieces.map((p) => (
+                        <div
+                            key={p.id}
+                            className="absolute w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full animate-confettiExplosion shadow-sm"
+                            style={{
+                                backgroundColor: p.color,
+                                '--tx': p.tx,
+                                '--ty': p.ty,
+                                '--rot': p.rot,
+                                animationDelay: p.delay,
+                                left: p.left,
+                                top: '50%'
+                            }}
+                        />
+                    ))}
+                </div>
+            );
+        });
+
+        const RobotAssistant = ({ step, maxSteps }) => {
+            const isFinalStep = step >= maxSteps;
+            const isThinking = step === maxSteps - 1 && maxSteps > 1;
+
+            const getContainerAnim = () => {
+                if (isFinalStep) return 'animate-robotJump';
+                if (isThinking) return 'animate-robotThinkTilt';
+                return 'animate-robotFloat';
+            };
+            const getArmLAnim = () => {
+                if (isFinalStep) return 'rotate-[150deg] animate-pulse';
+                if (step > 0) return 'animate-robotTalkArmL';
+                return 'rotate-45';
+            };
+            const getArmRAnim = () => {
+                if (isFinalStep) return '-rotate-[150deg] animate-pulse';
+                if (step > 0) return 'animate-robotTalkArmR';
+                return '-rotate-45';
+            };
+
+            const getEyes = () => {
+                if (isFinalStep) return <div className="w-full flex justify-between px-1"><div className="w-2.5 h-1.5 bg-emerald-400 rounded-t-full mt-0.5"></div><div className="w-2.5 h-1.5 bg-emerald-400 rounded-t-full mt-0.5"></div></div>;
+                if (step === 0) return <div className="w-full flex justify-between px-1.5"><div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div><div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div></div>;
+                return <div className="w-full flex justify-between px-1"><div className="w-2.5 h-2.5 bg-yellow-400 rounded-full animate-bounce"></div><div className="w-2.5 h-2.5 bg-yellow-400 rounded-full animate-bounce"></div></div>;
+            };
+            const getMouth = () => {
+                if (isFinalStep) return <div className="w-4 h-2.5 bg-rose-400 rounded-b-full mt-1"></div>;
+                if (step === 0) return <div className="w-3 h-1 bg-cyan-300 rounded-full mt-1"></div>;
+                return <div className="w-2.5 h-2.5 bg-rose-400 rounded-full mt-1 animate-ping"></div>;
+            };
+
+            return (
+                <div className={`relative flex flex-col items-center drop-shadow-xl select-none ${getContainerAnim()}`}>
+                    <div className="relative z-0 flex flex-col items-center translate-y-1">
+                        <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_10px_currentColor] z-10 transition-colors duration-300 ${isFinalStep ? 'text-emerald-400 bg-emerald-400' : 'text-yellow-400 bg-yellow-400 animate-pulse'}`}></div>
+                        <div className="w-1.5 h-3 bg-slate-300"></div>
+                    </div>
+                    <div className="relative z-10 w-12 h-12 sm:w-15 sm:h-15 bg-gradient-to-br from-white to-slate-200 rounded-xl border-[2.5px] border-indigo-400 shadow-xl flex flex-col items-center justify-center p-1">
+                        <div className="w-full h-full bg-slate-900 rounded-lg flex flex-col items-center justify-center p-1 shadow-inner border-[1.5px] border-indigo-500">
+                            {getEyes()}
+                            {getMouth()}
+                        </div>
+                    </div>
+                    <div className={`absolute top-1/2 -left-1.5 w-2 h-4 bg-slate-200 border-[2px] border-indigo-400 rounded-full z-0 origin-top ${getArmLAnim()}`}></div>
+                    <div className={`absolute top-1/2 -right-1.5 w-2 h-4 bg-slate-200 border-[2px] border-indigo-400 rounded-full z-0 origin-top ${getArmRAnim()}`}></div>
+                </div>
+            );
+        };
+
+        // =========================================================================
+        // 9. APLICACIÓN PRINCIPAL
+        // =========================================================================
+        function App() {
+            const [view, setView] = useState('home');
+            const [exIdx, setExIdx] = useState(0);
+            const [step, setStep] = useState(0);
+            const [isMuted, setIsMuted] = useState(false);
+            const scrollContainerRef = useRef(null);
+
+            const curEx = EXERCISES[exIdx];
+            const maxSteps = curEx.steps.length - 1;
+            const curStepData = curEx.steps[step];
+            const EnunciadoText = curEx.enunciado;
+
+            const handleInteraction = () => {
+                AudioController.init();
+                AudioController.startBGM();
+            };
+
+            const startExercise = (index) => {
+                handleInteraction();
+                AudioController.play('swoosh');
+                setExIdx(index);
+                setStep(0);
+                setView('lab');
+            };
+
+            const nextStep = () => {
+                handleInteraction();
+                if (step < maxSteps) {
+                    const next = step + 1;
+                    setStep(next);
+                    AudioController.play(next === maxSteps ? 'success' : 'pop');
+                } else {
+                    AudioController.play('swoosh');
+                    if (exIdx < EXERCISES.length - 1) {
+                        setExIdx(exIdx + 1);
+                        setStep(0);
+                    } else {
+                        setView('home');
+                    }
+                }
+            };
+
+            const prevStep = () => {
+                handleInteraction();
+                if (step > 0) {
+                    setStep(step - 1);
+                    AudioController.play('pop-reverse');
+                }
+            };
+
+            const toggleMute = () => {
+                handleInteraction();
+                setIsMuted(AudioController.toggleMute());
+            };
+
+            useEffect(() => {
+                if (scrollContainerRef.current) {
+                    scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+                }
+            }, [step, exIdx, view]);
+
+            // ------------------------- VISTA PORTADA -------------------------
+            if (view === 'home') {
+                const block1 = EXERCISES.filter(e => e.block === 1);
+                const block2 = EXERCISES.filter(e => e.block === 2);
+
+                const renderCard = (ex) => {
+                    const idx = EXERCISES.findIndex(item => item.id === ex.id);
+                    return (
+                        <button
+                            key={ex.id}
+                            onClick={() => startExercise(idx)}
+                            className="group text-left p-4 rounded-[1.5rem] bg-white/10 backdrop-blur-xl border-[3px] border-white/30 hover:border-yellow-300 hover:-translate-y-1.5 hover:shadow-[0_18px_32px_rgba(0,0,0,0.35)] transition-all flex flex-col relative overflow-hidden shadow-lg min-h-[9.5rem]"
+                        >
+                            <div className={`absolute inset-0 bg-gradient-to-br ${ex.cardGradient} opacity-85 group-hover:opacity-100 transition-opacity`}></div>
+                            <div className="relative z-10 flex-1 flex flex-col">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className={`${ex.badgeColor} text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm`}>
+                                        Reto {ex.id}
+                                    </span>
+                                    <span className="text-white/90 text-xs font-extrabold">{ex.steps.length} pasos</span>
+                                </div>
+                                <div className="flex-1 my-1.5 bg-white/95 rounded-xl px-2.5 py-2 text-slate-900 shadow-inner flex items-center justify-center border border-white/60 pointer-events-none math-card">
+                                    <MathDisplay latex={ex.previewLatex} align="center" />
+                                </div>
+                                <div className="text-white text-sm font-black text-center mt-1.5 drop-shadow-md">
+                                    {ex.subtitle}
+                                </div>
+                            </div>
+                        </button>
+                    );
+                };
+
+                return (
+                    <div className="w-screen h-[100dvh] bg-gradient-to-br from-[#1e3a8a] via-[#4338ca] to-[#be185d] flex flex-col items-center justify-start p-4 sm:p-6 relative font-fun overflow-y-auto scrollbar-hide">
+                        <FloatingBackground />
+
+                        {/* Barra superior de portada */}
+                        <div className="w-[96%] max-w-[1400px] z-20 flex items-center justify-between mb-6 mt-1">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl border-2 border-yellow-300 bg-white/15 backdrop-blur-md text-yellow-300 font-black tracking-wider uppercase shadow-md text-xs sm:text-base">
+                                <Rocket className="w-5 h-5 text-yellow-300" /> TuProfe20 Lab
+                            </div>
+                            <button onClick={toggleMute} title="Activar/Silenciar audio" className="p-2.5 sm:p-3 rounded-2xl bg-white/20 border-2 border-white/30 backdrop-blur-md text-white hover:bg-white/30 transition-all active:scale-95">
+                                {isMuted ? <VolumeX className="w-5 h-5 sm:w-6 sm:h-6" /> : <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" />}
+                            </button>
+                        </div>
+
+                        {/* Títulos principales */}
+                        <div className="relative z-10 text-center w-[96%] max-w-[1400px] flex flex-col items-center pb-12">
+                            <span className="px-4 py-1 rounded-full bg-cyan-400/20 border border-cyan-300/60 text-cyan-200 font-black uppercase tracking-widest text-xs sm:text-sm mb-3">
+                                Aritmética - Secundaria
+                            </span>
+                            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-white mb-3 drop-shadow-[0_6px_0_rgba(0,0,0,0.3)] tracking-tight leading-none uppercase">
+                                Tema: <span className="text-yellow-300 underline decoration-wavy decoration-cyan-400">Probabilidad</span>
+                            </h1>
+                            <p className="text-sm sm:text-lg lg:text-xl text-purple-100 mb-8 font-bold max-w-3xl leading-relaxed">
+                                Regla de Laplace paso a paso con representaciones geométricas interactivas y pizarra digital 🎲📐🤖
+                            </p>
+
+                            {/* Bloque 1 */}
+                            <div className="w-full mb-8">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <span className="px-4 py-1.5 rounded-xl bg-yellow-400 text-slate-900 font-black text-xs sm:text-sm uppercase tracking-wider shadow-md">
+                                        Bloque 1 · Actividad para la Clase (1 - 6)
+                                    </span>
+                                    <div className="flex-1 h-0.5 bg-white/25 rounded-full"></div>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                                    {block1.map(renderCard)}
+                                </div>
+                            </div>
+
+                            {/* Bloque 2 */}
+                            <div className="w-full">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <span className="px-4 py-1.5 rounded-xl bg-cyan-400 text-slate-900 font-black text-xs sm:text-sm uppercase tracking-wider shadow-md">
+                                        Bloque 2 · Práctica Adicional (7 - 12)
+                                    </span>
+                                    <div className="flex-1 h-0.5 bg-white/25 rounded-full"></div>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                                    {block2.map(renderCard)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // ------------------------- VISTA LABORATORIO -------------------------
+            return (
+                <div className="w-screen h-[100dvh] bg-gradient-to-br from-[#0f172a] via-[#312e81] to-[#831843] text-slate-800 flex flex-col p-2 sm:p-3.5 relative font-fun overflow-hidden">
+                    <FloatingBackground />
+                    {step === maxSteps && <Confetti />}
+
+                    {/* Barra superior de navegación */}
+                    <div className="shrink-0 relative z-10 w-[98%] max-w-[1440px] mx-auto flex justify-between items-center mb-2.5 px-1 gap-2">
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => { AudioController.play('swoosh'); setView('home'); }}
+                                className="flex items-center justify-center px-3.5 py-2 rounded-[1rem] bg-white/10 border-[2.5px] border-white/30 backdrop-blur-md text-white font-black hover:bg-white/20 transition-all shadow-lg active:scale-95 text-xs sm:text-sm"
+                            >
+                                <Home className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-1.5" />
+                                <span className="hidden sm:inline">Portada</span>
+                            </button>
+                            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 border border-yellow-300/40 text-yellow-300 font-black text-xs uppercase tracking-wider">
+                                <Rocket className="w-4 h-4" /> Aritmética · Probabilidad
+                            </div>
+                        </div>
+
+                        {/* Selector rápido 1-12 */}
+                        <div className="flex items-center gap-1 sm:gap-1.5 bg-black/35 p-1.5 rounded-[1rem] border-2 border-white/20 backdrop-blur-md shadow-lg overflow-x-auto scrollbar-hide max-w-[60vw]">
+                            {EXERCISES.map((ex, i) => (
+                                <button
+                                    key={ex.id}
+                                    onClick={() => startExercise(i)}
+                                    className={`shrink-0 w-7 h-7 sm:w-9 sm:h-9 rounded-[0.7rem] font-black text-xs sm:text-sm transition-all ${
+                                        exIdx === i
+                                            ? 'bg-yellow-400 text-slate-900 scale-110 shadow-[0_0_12px_rgba(250,204,21,0.7)]'
+                                            : 'text-white hover:bg-white/20'
+                                    }`}
+                                >
+                                    {ex.id}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button onClick={toggleMute} title="Audio" className="p-2 sm:p-2.5 rounded-[1rem] bg-white/10 border-[2.5px] border-white/30 text-white hover:bg-white/20 transition-all shadow-lg active:scale-95">
+                            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                        </button>
+                    </div>
+
+                    {/* Contenedor principal de la pizarra */}
+                    <div className="flex-1 min-h-0 relative z-10 w-[98%] max-w-[1440px] mx-auto bg-white rounded-[1.8rem] sm:rounded-[2.2rem] border-[5px] sm:border-[7px] border-slate-100 shadow-[0_25px_55px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden">
+                        
+                        {/* Cabecera oscura con enunciado */}
+                        <div className="shrink-0 bg-slate-900 border-b-[4px] border-cyan-500 px-4 py-2.5 sm:px-6 sm:py-3 flex flex-col justify-center relative shadow-md z-20">
+                            <div className="flex justify-between items-center w-full max-w-6xl mx-auto mb-1.5">
+                                <div className="flex items-center gap-2">
+                                    <span className="bg-cyan-500 text-slate-900 font-black text-xs px-2.5 py-0.5 rounded-md uppercase tracking-widest shadow-sm">
+                                        {curEx.title}
+                                    </span>
+                                    <span className="text-slate-300 font-bold text-xs hidden sm:inline">
+                                        {curEx.block === 1 ? 'Bloque 1 · Clase' : 'Bloque 2 · Práctica'}
+                                    </span>
+                                </div>
+                                <span className="text-yellow-300 font-extrabold text-xs sm:text-sm bg-white/10 px-3 py-0.5 rounded-md">
+                                    {curEx.subtitle}
+                                </span>
+                            </div>
+                            <div className="text-white font-bold text-sm sm:text-base md:text-lg text-center w-full max-w-5xl mx-auto leading-snug math-enunciado">
+                                <EnunciadoText />
+                            </div>
+                        </div>
+
+                        {/* Área dividida 50% / 50% */}
+                        <div className="flex-1 flex flex-col md:flex-row bg-slate-50 overflow-hidden relative">
+                            
+                            {/* PANEL IZQUIERDO: DESARROLLO PASO A PASO SIN CAJAS */}
+                            <div
+                                ref={scrollContainerRef}
+                                className="w-full md:w-1/2 flex-1 px-5 py-5 sm:px-8 sm:py-6 overflow-y-auto scrollbar-hide flex flex-col gap-5 pb-20 relative z-10 border-b-2 md:border-b-0 md:border-r-2 border-slate-200/70"
+                            >
+                                {/* Patrón sutil de cuaderno de puntos */}
+                                <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#0f172a_1.5px,transparent_1.5px)] [background-size:20px_20px] pointer-events-none"></div>
+                                
+                                <div className="relative z-10 flex items-center justify-between border-b border-slate-200 pb-2 mb-1">
+                                    <span className="text-xs font-black uppercase tracking-widest text-indigo-600">
+                                        Desarrollo Paso a Paso (Regla de Laplace)
+                                    </span>
+                                    <span className="text-xs font-extrabold text-slate-400">
+                                        <MathDisplay inline latex="P(A)=\frac{n(A)}{n(\Omega)}" />
+                                    </span>
+                                </div>
+
+                                {curEx.steps.slice(0, step + 1).map((s, idx) => {
+                                    const isCurrent = idx === step;
+                                    const isFinal = isCurrent && step === maxSteps;
+                                    return (
+                                        <div
+                                            key={`${exIdx}-${idx}`}
+                                            className={`relative z-10 pl-4 transition-all duration-300 border-l-[4px] ${
+                                                isFinal
+                                                    ? 'border-emerald-500 opacity-100 animate-slideInRight'
+                                                    : isCurrent
+                                                        ? 'border-cyan-500 opacity-100 animate-slideInRight'
+                                                        : 'border-slate-300 opacity-55'
+                                            }`}
+                                        >
+                                            <div className="mb-1 flex items-center gap-2">
+                                                <span
+                                                    className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full font-black text-[11px] sm:text-xs tracking-wide ${
+                                                        isFinal
+                                                            ? 'bg-emerald-500 text-white shadow-sm'
+                                                            : isCurrent
+                                                                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm'
+                                                                : 'bg-slate-200 text-slate-600'
+                                                    }`}
+                                                >
+                                                    {isCurrent && <Sparkles className="w-3.5 h-3.5" />}
+                                                    {s.badge}
+                                                </span>
+                                            </div>
+                                            {/* Expresión matemática limpia y fluida SIN caja */}
+                                            <div
+                                                className={`py-1 ${
+                                                    isFinal
+                                                        ? 'math-final'
+                                                        : isCurrent
+                                                            ? 'math-current'
+                                                            : 'math-history'
+                                                }`}
+                                            >
+                                                <MathDisplay latex={s.latex} align="left" />
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* PANEL DERECHO: REPRESENTACIÓN GRÁFICA CON FIGURAS GEOMÉTRICAS */}
+                            <div className="w-full md:w-1/2 flex-1 bg-white/70 p-3 sm:p-5 flex flex-col items-center justify-center relative z-10 pointer-events-none">
+                                <h3 className="absolute top-3 left-4 font-black text-slate-400 uppercase tracking-widest text-[11px] sm:text-xs flex items-center gap-1.5 z-20">
+                                    <Shapes className="w-4 h-4 text-cyan-500" /> Representación Geométrica
+                                </h3>
+                                <div className="w-full h-full flex items-center justify-center pt-5 pointer-events-auto">
+                                    <ProbabilityGraphic key={`g-${exIdx}-${step}`} exerciseId={curEx.id} step={step} />
+                                </div>
+                            </div>
+
+                            {/* Pizarra superpuesta interactiva */}
+                            <DrawingCanvas />
+                        </div>
+
+                        {/* Barra del Robot Asistente */}
+                        <div className="shrink-0 bg-white w-full px-4 py-2 sm:px-6 sm:py-2.5 flex items-center gap-3 sm:gap-5 border-t-[3px] border-slate-100 z-30 relative shadow-[0_-8px_18px_rgba(0,0,0,0.04)]">
+                            <div className="shrink-0 absolute -top-9 sm:relative sm:top-0 left-3 sm:left-0 drop-shadow-xl z-50">
+                                <RobotAssistant step={step} maxSteps={maxSteps} />
+                            </div>
+                            <div className="flex-1 text-xs sm:text-sm md:text-base font-bold text-slate-700 leading-snug bg-blue-50/85 px-3 py-2 sm:px-4 sm:py-2.5 rounded-[1rem] border-2 border-blue-100 min-h-[2.8rem] flex items-center shadow-sm ml-[3.4rem] sm:ml-0">
+                                <div key={`speech-${exIdx}-${step}`} className="animate-slideInRight w-full">
+                                    {curStepData.robotSpeech}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Barra inferior de controles de paso */}
+                        <div className="shrink-0 bg-gradient-to-b from-[#e0e7ff] to-[#c7d2fe] p-2 sm:p-2.5 w-full flex flex-col items-center border-t-[3px] border-white z-40">
+                            <div className="flex justify-center items-stretch w-full max-w-4xl gap-2 sm:gap-3 h-9 sm:h-10">
+                                <button
+                                    onClick={prevStep}
+                                    disabled={step === 0}
+                                    className="flex-[0.8] bg-[#a5b4fc] border-b-[4px] border-[#6366f1] text-[#312e81] rounded-l-xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 active:border-b-0 active:translate-y-[4px] disabled:opacity-40 transition-all hover:bg-[#c7d2fe]"
+                                >
+                                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 stroke-[3px]" />
+                                    <span className="hidden sm:inline">Atrás</span>
+                                </button>
+                                <div className="bg-[#6366f1] text-white font-black px-3 sm:px-5 text-xs sm:text-sm flex items-center justify-center border-b-[4px] border-[#4338ca] shadow-inner whitespace-nowrap min-w-[4.5rem]">
+                                    Paso {step + 1}/{maxSteps + 1}
+                                </div>
+                                <button
+                                    onClick={nextStep}
+                                    className={`flex-[2] border-b-[4px] text-white rounded-r-xl font-black text-xs sm:text-sm flex items-center justify-center gap-1 active:border-b-0 active:translate-y-[4px] transition-all shadow-sm hover:brightness-110 ${
+                                        step === maxSteps
+                                            ? 'bg-gradient-to-r from-[#10b981] to-[#047857] border-[#065f46] animate-pulse'
+                                            : 'bg-gradient-to-r from-[#06b6d4] to-[#0284c7] border-[#0369a1]'
+                                    }`}
+                                >
+                                    <span>
+                                        {step < maxSteps
+                                            ? '¡Siguiente Paso!'
+                                            : exIdx < EXERCISES.length - 1
+                                                ? `Siguiente Reto (${curEx.id + 1})`
+                                                : '¡Volver a Portada!'}
+                                    </span>
+                                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[3px]" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
